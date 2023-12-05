@@ -6,6 +6,21 @@ OSS stands for Open Source Software.
 
 A OSS Contributor can contribute in many forms, such as writing code, fixing bugs, improving documentation, or even participating in discussions.
 
+## Strings
+
+- Concatenation: `<>`
+- Multi lines:
+
+```elixir
+string = """
+line 1
+line 2
+"""
+```
+
+- Interpolation: `#{value}`
+- Escaping: `\`
+
 ## Comparison Operators
 
 Different to JS: `1.0 === 1` return `false` as type difference: `float` vs `integer`
