@@ -65,7 +65,7 @@ You might wonder why we have both strings and atoms because they seem to do the 
 One primary reason is performance. Atoms are stored in an **atom table** and can be referenced by a key. This makes it way faster to check if two atoms are equal.
 
 What is an **atom table**? Imagine it like an excel spreadsheet.
-Each value has a key. For the computer, comparing these keys in the table is much more performance that checking if every character in a string is equal.
+Each value has a key. For the computer, comparing these keys in the table is much more performance than checking if every character in a string is equal.
 
 It's kind of like checking if `1 == 2` instead of checking if`"HeLloWorld == HeLloWorLd"`.
 
@@ -151,19 +151,19 @@ false === :false
 In the Elixir cell below, use `===` to check if `nil` is equal to `:nil`.
 
 ```elixir
-
+nil === nil
 ```
 
 Check if `true` is equal to `:true`.
 
 ```elixir
-
+true === true
 ```
 
 Check if `false` is equal to `:false`.
 
 ```elixir
-
+false === false
 ```
 
 ## Further Reading
