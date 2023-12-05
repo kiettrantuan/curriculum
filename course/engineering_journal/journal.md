@@ -132,6 +132,40 @@ keyword_list = [key: "value"]
 keyword_list[:key] === "value"
 ```
 
+### Maps
+
+Defined using `%{}`. A key-value pair in map separated by an arrow `=>`.
+
+Key must be unique (different from keyword list) and it can be any elixir term.
+
+```exs
+%{:key => "value"}
+
+%{"key" => "value"}
+
+%{1 => "value"}
+
+%{[1, 2, 3] => "value"}
+```
+
+Atom keys only Map can be write like keyword list.
+
+```exs
+%{key1: "value", key2: "value"}
+```
+
+Access values using their key with square bracket (or dot - only valid for atom keys).
+
+```exs
+# Will break if key does not exist in map
+%{key1: %{key2: %{key3: "value"}}}.key1.key2.key3 === "value"
+# Will NOT break even key does not exist in map
+%{1 => %{2 => %{3 => "value"}}}[1][2][3] === "value"
+%{1 => %{2 => %{3 => "value"}}}[1][2][4] === nil
+```
+
+Can update Existing keys values using syntax `%{initial_map | updated_values}`.
+
 ### Pattern Matching
 
 `=` sign is the `match operator` because it uses pattern matching to bind variables.
@@ -167,4 +201,15 @@ my_variable === "world"
 [{k, v}] = [key: "value"]
 k === :key
 v === "value"
+```
+
+#### Map
+
+Unlike List, Map don't have to match on every key-value pair and can NOT be pattern match the key.
+
+```exs
+%{one: one} = %{one: 1, two: 2}
+one === 1
+%{hello => world} = %{"hello" => "world"}
+# Raise error as key must be literals
 ```

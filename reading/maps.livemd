@@ -97,7 +97,7 @@ Elixir is very helpful and provides a warning to let us know we're overriding a 
 As mentioned earlier, maps do not guarantee key order, which is why you'll notice the returned value of the map below does not have the same order as the map returned by the Elixir cell.
 
 ```elixir
-%{one: "one", two: "two", three: "three"}
+%{one: "one", three: "three", two: "two"}
 ```
 
 Maps can have any elixir term as a key, this makes them incredibly flexible.
@@ -205,6 +205,8 @@ map[:hello]
 
 ```elixir
 map = %{hello: "world"}
+
+{map.hello, map[:hello]}
 ```
 
 ### Updating Maps
@@ -265,7 +267,8 @@ todo = %{title: "finish maps exercise", completed: false}
 </details>
 
 ```elixir
-
+todo = %{title: "finish maps exercises", completed: false}
+%{todo | completed: true}
 ```
 
 ## Pattern Matching
@@ -288,6 +291,7 @@ This also works with non-atom key maps.
 
 ```elixir
 %{"hello" => world} = %{"hello" => "world"}
+world
 ```
 
 We can only pattern match on the value in the map, not the key. Keys in maps must be **literals** such as atoms, strings, tuples, etc.
@@ -344,7 +348,8 @@ Bind `2` and `4` in the following map to variables `two` and `four`.
 Enter your solution below.
 
 ```elixir
-%{one: 1, two: 2, three: 3, four: 4}
+%{two: two, four: four} = %{one: 1, two: 2, three: 3, four: 4}
+{two, four}
 ```
 
 ## Further Reading
