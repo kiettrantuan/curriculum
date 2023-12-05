@@ -105,6 +105,33 @@ Lists can be added or subtracted using `++` and `--`. This operation occurs from
 # => []
 ```
 
+#### Keyword Lists
+
+Keyword List is ordered vs. Map unordered.
+
+Keys DO NOT have to be unique
+
+Performant for small amounts of data, but not for large amounts of data compare to maps.
+
+```exs
+[artist1: "song 1", artist2: "song 2", artist3: "song 3", artist4: "song 4", artist5: "song 5"]
+```
+
+Actually a list of tuples with each first elements is atom.
+
+```exs
+[key: "value"] === [{:key, "value"}]
+```
+
+Keyword list syntax must come at the end of a list, or it'll cause a SyntaxError.
+
+Access values using their atom key with square bracket.
+
+```exs
+keyword_list = [key: "value"]
+keyword_list[:key] === "value"
+```
+
 ### Pattern Matching
 
 `=` sign is the `match operator` because it uses pattern matching to bind variables.
@@ -129,4 +156,15 @@ my_tuple = {1, 2, 3}
 # head = 1, tail = [2, 3]
 [first, second | rest] = [1, 2, 3, 4, 5,6]
 # fist = 1, second = 2, rest = [3, 4, 5, 6]
+```
+
+#### Keyword List
+
+```exs
+[hello: my_variable] = [hello: "world"]
+my_variable === "world"
+
+[{k, v}] = [key: "value"]
+k === :key
+v === "value"
 ```
