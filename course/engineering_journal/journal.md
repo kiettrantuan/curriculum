@@ -15,7 +15,7 @@ A OSS Contributor can contribute in many forms, such as writing code, fixing bug
 - Concatenation: `<>`
 - Multi lines:
 
-```elixir
+```exs
 string = """
 line 1
 line 2
@@ -39,12 +39,42 @@ number < atom < reference < function < port < pid < tuple < map < list < bitstri
 
 ### Atoms
 
-Named constants. Their name is their value. Ex: `:success` `:error`
+Named constants. Their name is their value
 
-Defined using a colon `:` and a series of letters, digits, and certain valid symbols
+Defined using a colon `:` and a series of letters, digits, and certain valid symbols.
+
+```exs
+:success
+:error
+
+# special atoms (:nil === nil)
+nil
+false
+true
+```
 
 Atoms are stored in an atom table and can be referenced by a key. This makes it way faster (than string comparison) to check if two atoms are equal.
 
 Convention: lowercase separated by underscores.
 
-`nil`, `false`, `true` are actually atoms
+### Tuples
+
+Fixed size containers for multiple elements. Can contain any data type.
+
+```exs
+{}
+{0, "string", :atoms}
+{:success, "Well done!"}
+{:error, "Too bad!"}
+```
+
+### Pattern Matching
+
+`=` sign is the `match operator` because it uses pattern matching to bind variables.
+
+```exs
+{1, 2, 3} = {1, 2, 3}
+my_tuple = {1, 2, 3}
+# Ignored variables are leaded by an underscore `_`
+{one, _two, three} = {1, 2, 3}
+```
