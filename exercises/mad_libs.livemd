@@ -87,7 +87,7 @@ Enter your solution below.
 ```elixir
 blank1 = "programmer"
 blank2 = "fulltime-remote"
-blank3 = "neet"
+blank3 = "homebody"
 
 "#{blank1} and #{blank2} combined makes #{blank3}."
 ```
