@@ -27,7 +27,10 @@ line 2
 
 ### Comparison Operators
 
-Different to JS: `1.0 === 1` return `false` as type difference: `float` vs `integer`
+```exs
+# return false as type difference: float vs integer
+1.0 === 1
+```
 
 You can compare different data types to each other in the following [Sorting Order](https://hexdocs.pm/elixir/1.12.3/operators.html#term-ordering).
 
@@ -61,20 +64,69 @@ Convention: lowercase separated by underscores.
 
 Fixed size containers for multiple elements. Can contain any data type.
 
+Defined using curly brackets `{}`.
+
 ```exs
 {}
 {0, "string", :atoms}
 {:success, "Well done!"}
-{:error, "Too bad!"}
+{:error, "**Too** bad!"}
+```
+
+### Lists
+
+Defined using square brackets `[]`.
+
+```exs
+[0, "string", :atoms]
+```
+
+Actually Linked Lists where every element is a Cons Cells with Head and Tail: `[head | tail]`
+
+```exs
+[2, 3] 
+# is syntax sugar for
+[2 | [3 | []]]
+```
+
+Lists can be added or subtracted using `++` and `--`. This operation occurs from `right to left`. Should use brackets avoid unintuitive code.
+
+```exs
+[0] ++ [1]
+# => [0, 1]
+[0, 1, 2, 3, 2, 1, 0] ++ [0, 2, 3]
+# remove the leftmost elements first
+# => [1, 2, 1, 0]
+[0, 1, 2] -- [0, 1] -- [2]
+# right to left:
+# [0, 1] -- [2] == [0, 1]
+# [0, 1, 2] -- [0, 1] => [2]
+([0, 1, 2] -- [0, 1]) -- [2]
+# => []
 ```
 
 ### Pattern Matching
 
 `=` sign is the `match operator` because it uses pattern matching to bind variables.
 
+Ignored variables are led by an underscore `_`
+
+#### Tuple
+
 ```exs
 {1, 2, 3} = {1, 2, 3}
 my_tuple = {1, 2, 3}
-# Ignored variables are leaded by an underscore `_`
 {one, _two, three} = {1, 2, 3}
+```
+
+#### List
+
+```exs
+[first] = [1]
+[first] = [1, 2, 3]
+# raise error
+[head | tail] = [1, 2, 3]
+# head = 1, tail = [2, 3]
+[first, second | rest] = [1, 2, 3, 4, 5,6]
+# fist = 1, second = 2, rest = [3, 4, 5, 6]
 ```
