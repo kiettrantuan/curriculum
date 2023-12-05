@@ -65,7 +65,9 @@ small = 5
 Enter your solution below.
 
 ```elixir
-
+small = 5
+medium = 20
+large = 30
 ```
 
 ## Small, Medium, Large
@@ -95,7 +97,7 @@ small + medium + large
 Enter your answer in the code cell below.
 
 ```elixir
-
+total = small + medium + large
 ```
 
 ## Multiples
@@ -114,12 +116,12 @@ small * 10 + medium * 5 + large * 3
 Enter your answer below.
 
 ```elixir
-
+toal = 10 * small + 5 * medium + 3 * large
 ```
 
 ## Progress Bar
 
-Users define a a `goal` number of points to earn each day. Determine what percentage progress have they made if they would like to earn `40` points and have completed a `small` and a `medium` habit.
+Users define a `goal` number of points to earn each day. Determine what percentage progress have they made if they would like to earn `40` points and have completed a `small` and a `medium` habit.
 
 Remember that you can calculate percentage with $\frac{points}{goal} * 100$
 
@@ -145,7 +147,8 @@ points = small + medium
 Enter your answer below.
 
 ```elixir
-
+goal = 40
+progress = (small + medium) / goal * 100
 ```
 
 ## Penalties And Rewards
@@ -172,7 +175,9 @@ small * 1.6 * 3 + medium * 2 + large * 2 * 0.5
 Enter your answer below.
 
 ```elixir
-
+bonus = 1.6
+penalty = 0.5
+total = 3 * small * bonus + 2 * medium + 2 * large * penalty
 ```
 
 ## Bonus: Add Your Own Feature
@@ -181,7 +186,11 @@ Add your own feature to the habit tracking app. Use comments to describe your fe
 how it would affect calculating the total score and/or the total percentage of completed habits.
 
 ```elixir
-
+# +1 per goal completed in month
+goals = 0
+goal_bonus = 5
+# user earns bonus at end of month
+total = total + goals * goal_bonus
 ```
 
 ## Commit Your Progress
