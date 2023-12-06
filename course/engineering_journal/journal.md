@@ -168,6 +168,54 @@ Access values using their key with square bracket (or dot - only valid for atom 
 
 Can update Existing keys values using syntax `%{initial_map | updated_values}`.
 
+## Pattern Matching
+
+`=` sign is the `match operator` because it uses pattern matching to bind variables.
+
+Ignored variables are led by an underscore `_`
+
+#### Tuple
+
+```exs
+{1, 2, 3} = {1, 2, 3}
+my_tuple = {1, 2, 3}
+{one, _two, three} = {1, 2, 3}
+```
+
+#### List
+
+```exs
+[first] = [1]
+[first] = [1, 2, 3]
+# raise error
+[head | tail] = [1, 2, 3]
+# head = 1, tail = [2, 3]
+[first, second | rest] = [1, 2, 3, 4, 5,6]
+# fist = 1, second = 2, rest = [3, 4, 5, 6]
+```
+
+#### Keyword List
+
+```exs
+[hello: my_variable] = [hello: "world"]
+my_variable === "world"
+
+[{k, v}] = [key: "value"]
+k === :key
+v === "value"
+```
+
+#### Map
+
+Unlike List, Map don't have to match on every key-value pair and can NOT be pattern match the key.
+
+```exs
+%{one: one} = %{one: 1, two: 2}
+one === 1
+%{hello => world} = %{"hello" => "world"}
+# Raise error as key must be literals
+```
+
 ## Control Flow And Abstraction
 
 ### Functions
@@ -310,50 +358,208 @@ cond do
 end ===  "coat"
 ```
 
-## Pattern Matching
+## Modules And Structs
 
-`=` sign is the `match operator` because it uses pattern matching to bind variables.
+### Modules
 
-Ignored variables are led by an underscore `_`
+Can be refer as a "bag of functions".
 
-#### Tuple
+Define a Module using `defmodule`. Define a Function inside Module using `def` or `defp` for private function.
 
 ```exs
-{1, 2, 3} = {1, 2, 3}
-my_tuple = {1, 2, 3}
-{one, _two, three} = {1, 2, 3}
+# define module
+
+defmodule ModuleName do
+  def function_name do
+    "return value"
+  end
+end
+
+defmodule ModuleName2 do
+  def function_name(input \\ "default input value") do
+    input
+  end
+  
+  defp private_fn(input) do
+    input
+  end
+end
+
+# call function
+
+ModuleName.function_name() === "return value"
+
+ModuleName2.function_name() === "default input value"
+ModuleName2.function_name(2) === 2
+
+# Following call raise error as private_fn is undefined outside it's module
+# ModuleName2.private_fn(2)
 ```
 
-#### List
+Callback function passed to Module's function must be:
+
+- Explicitly provided the `functions arity` using the capture operator `&`.
+- OR wrap in an anonymous function.
 
 ```exs
-[first] = [1]
-[first] = [1, 2, 3]
-# raise error
-[head | tail] = [1, 2, 3]
-# head = 1, tail = [2, 3]
-[first, second | rest] = [1, 2, 3, 4, 5,6]
-# fist = 1, second = 2, rest = [3, 4, 5, 6]
+defmodule HigherOrder do
+  def higher_order_function(callback) do
+    callback.()
+  end
+end
+
+defmodule Callback do
+  def callback_function do
+    "I was called!"
+  end
+end
+
+# Arity + Capture operator (&)
+HigherOrder.higher_order_function(&Callback.callback_function/0)
+
+# Wrap in anonymous function
+HigherOrder.higher_order_function(fn -> Callback.callback_function() end)
 ```
 
-#### Keyword List
+#### SubModules
+
+Defined by separate module names with a period `.` OR nested `defmodule`.
 
 ```exs
-[hello: my_variable] = [hello: "world"]
-my_variable === "world"
+defmodule Languages.English do
+  def greeting do
+    "Hello"
+  end
+end
 
-[{k, v}] = [key: "value"]
-k === :key
-v === "value"
+Languages.English.greeting() === "Hello"
+
+defmodule NestedLanguages do
+  defmodule English do
+    def greeting do
+      "Hello"
+    end
+  end
+end
+
+NestedLanguages.English.greeting() === Languages.English.greeting()
 ```
 
-#### Map
+#### Attributes
 
-Unlike List, Map don't have to match on every key-value pair and can NOT be pattern match the key.
+Define a compile-time module attribute using `@`.
 
 ```exs
-%{one: one} = %{one: 1, two: 2}
-one === 1
-%{hello => world} = %{"hello" => "world"}
-# Raise error as key must be literals
+defmodule Hero do
+  @name "Spider-Man"
+  @nemesis "Green Goblin"
+
+  def introduce do
+    "Hello, my name is #{@name}!"
+  end
+
+  def catchphrase do
+    "I'm your friendly neighborhood #{@name}!"
+  end
+
+  def defeat do
+    "I #{@name} will defeat you #{@nemesis}!"
+  end
+end
+```
+
+#### Module Scope
+
+Should Read `Module Scope` section in docs, it's pretty important. Below just some short definition.
+
+```exs
+top_scope = "top_scope"
+
+defmodule ModuleScope2 do
+  # `ModuleScope2` can NOT access `top_scope`
+  module_scope_err = top_scope
+
+  # This fine
+  module_scope = "module_scope"
+  IO.inspect(module_scope)
+
+  def function_scope do
+    # `function_scope` can NOT access `module_scope`
+    fn_scope_err = module_scope
+
+    # This fine
+    function_scope = "function scope"
+    IO.inspect(module_scope)
+  end
+end
+```
+
+#### Multiple Function Clauses
+
+```exs
+defmodule MultipleFunctionClauses do
+  def my_function do
+    "arity is 0"
+  end
+
+  def my_function(_param1) do
+    "arity is 1"
+  end
+
+  def my_function(_param1, _param2) do
+    "arity is 2"
+  end
+end
+
+MultipleFunctionClauses.my_function() === "arity is 0"
+MultipleFunctionClauses.my_function(1) === "arity is 1"
+MultipleFunctionClauses.my_function(2) === "arity is 2"
+```
+
+Default input
+
+```exs
+defmodule MultipleDefaultArgs do
+  def all_defaults(param1 \\ "default argument 1", param2 \\ "default argument 2") do
+    binding()
+  end
+
+  def some_defaults(param1 \\ "default arg 1", param2) do
+    binding()
+  end
+end
+
+MultipleDefaultArgs.all_defaults() === [param1: "default argument 1", param2: "default argument 2"]
+
+MultipleDefaultArgs.some_defaults("overridden argument") === [param1: "default arg 1", param2: "overridden argument"]
+```
+
+We can document modules using `@doc` and `@moduledoc` module attributes with a multiline string `"""`. You can add `iex>` in doc for IEx Shell which will be run automatically in Livebook.
+
+- `@moduledoc` should describe the module at a high level.
+- `@doc` should document a single function in the module.
+
+```exs
+defmodule DoctestExample do
+  @moduledoc """
+  DoctestExample
+
+  Explains doctests with examples
+  """
+
+  @doc """
+  Returns a personalized greeting for one person.
+
+  ## Examples
+
+    iex> DoctestExample.hello()
+    "Hello Jon!"
+
+    iex> DoctestExample.hello("Bill")
+    "Hello Bill!"
+  """
+  def hello(name \\ "Jon") do
+    "Hello #{name}!"
+  end
+end
 ```
