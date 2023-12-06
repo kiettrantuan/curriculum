@@ -125,9 +125,21 @@ defmodule Pokemon do
       iex> Pokemon.attack(attacker, defender)
       %Pokemon{name: "Bulbasaur", type: :grass, health: 10.0, attack: 5, speed: 20}
   """
-  defstruct []
+  defstruct [:name, :type, :health, :attack, :speed]
+
+  defp mul(t1, t2) do
+    cond do
+      {t1, t2} in [{:fire, :grass}, {:grass, :water}, {:water, :fire}] -> 2
+      {t1, t2} in [{:fire, :water}, {:grass, :fire}, {:water, :grass}] -> 0.5
+      true -> 1
+    end
+  end
 
   def attack(attacker, defender) do
+    %Pokemon{
+      defender
+      | health: defender.health - attacker.attack * mul(attacker.type, defender.type)
+    }
   end
 end
 ```
@@ -186,7 +198,15 @@ Pokemon.attack(charmander, bulbasaur)
 Enter your solution below.
 
 ```elixir
+charmander = %Pokemon{name: "charmander", type: :fire, health: 20, attack: 5, speed: 20}
+bulbasaur = %Pokemon{name: "bulbasaur", type: :grass, health: 20, attack: 5, speed: 20}
+squirtle = %Pokemon{name: "squirtle", type: :water, health: 20, attack: 5, speed: 20}
 
+{
+  Pokemon.attack(charmander, bulbasaur),
+  Pokemon.attack(charmander, squirtle),
+  Pokemon.attack(squirtle, bulbasaur)
+}
 ```
 
 ## Commit Your Progress
