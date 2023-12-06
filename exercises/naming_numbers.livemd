@@ -84,7 +84,25 @@ naming_numbers.(1)
 Enter your solution below.
 
 ```elixir
+naming_numbers = fn num ->
+  case num do
+    0 -> "zero"
+    1 -> "one"
+    2 -> "two"
+    3 -> "three"
+    4 -> "four"
+    5 -> "five"
+    6 -> "six"
+    7 -> "seven"
+    8 -> "eight"
+    9 -> "nine"
+    _ -> "please input 0 -> 9"
+  end
+end
 
+input = Enum.random(0..10)
+
+{input, naming_numbers.(input)}
 ```
 
 ## Numbering Names
@@ -181,7 +199,31 @@ flowchart
 </details>
 
 ```elixir
+numbering_names = fn num_str ->
+  if is_bitstring(num_str) do
+    num_str_cap = String.capitalize(num_str)
 
+    case num_str_cap do
+      "Zero" -> 0
+      "One" -> 1
+      "Two" -> 2
+      "Three" -> 3
+      "Four" -> 4
+      "Five" -> 5
+      "Six" -> 6
+      "Seven" -> 7
+      "Eight" -> 8
+      "Nine" -> 9
+      _ -> "invalid"
+    end
+  else
+    "not string"
+  end
+end
+
+input = Enum.random(["Zero", "zero", "Five", "five", "Nine", "nine", 1, :any, "any"])
+
+{input, numbering_names.(input)}
 ```
 
 ## Commit Your Progress
