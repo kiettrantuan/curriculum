@@ -168,6 +168,8 @@ Access values using their key with square bracket (or dot - only valid for atom 
 
 Can update Existing keys values using syntax `%{initial_map | updated_values}`.
 
+## Control Flow And Abstraction
+
 ### Functions
 
 ```exs
@@ -221,7 +223,94 @@ one.(1) |> two.(2) |> three.() |> four.()
 1 |> one.() |> two.(2) |> three.() |> four.()
 ```
 
-### Pattern Matching
+### Control Flow
+
+Common statements: `if` , `cond` , `case`
+
+#### If (2 paths)
+
+```exs
+weather == :hot
+
+if weather == :cold do
+  "coat"
+else
+  "t-shirt"
+end
+
+# Not recommend
+weather = :sunny
+
+recommendation = "t-shirt"
+recommendation = if weather == :snowing, do: "thick coat", else: recommendation
+recommendation = if weather == :raining, do: "raincoat", else: recommendation
+recommendation = if weather == :foggy, do: "something bright", else: recommendation
+
+recommendation === "t-shirt"
+```
+
+We can use `unless` which is `if` reverse.
+
+```exs
+eat = true
+
+unless eat do
+  "Hungry"
+else
+  "Not hungry"
+end === "Not hungry"
+```
+
+#### Case (Pattern matching)
+
+```exs
+weather = :sunny
+
+case weather do
+  :sunny -> "t-shirt"
+  :snowing -> "thick coat"
+  :raining -> "raincoat"
+  :foggy -> "something bright"
+  _ -> "default"
+end
+```
+
+Case does pattern matching left and right of `->` until match; No cases match will raise Error.
+
+```exs
+case {:exactly, :equal} do
+  {:not_exactly, :equal} -> "non-matching case"
+  {:exactly, :equal} -> "matching case"
+end === "matching case"
+
+# Use variable to match anything (skip pattern matching for that value | common use as default case)
+
+case {:exactly, :equal} do
+  {_mostly, :equal} -> "matching case"
+  {:exactly, :equal} -> "exactly equal case"
+end === "matching case"
+```
+
+#### Cond (Condition)
+
+Return right value of first accepted truthy on the left of `->`. Will raise Error if no condition met.
+
+```exs
+temperature = 6
+
+cond do
+  temperature == 21 -> "t-shirt"
+  temperature >= 16 and temperature <= 20 -> "heavy shirt"
+  temperature >= 11 and temperature <= 15 -> "light coat"
+  temperature >= 6 and temperature <= 10 -> "coat"
+  temperature == 6 -> "coat2"
+  temperature <= 5 -> "thick coat"
+  # Use true for default
+  true -> default
+end ===  "coat"
+```
+
+## Pattern Matching
 
 `=` sign is the `match operator` because it uses pattern matching to bind variables.
 

@@ -133,7 +133,13 @@ end
 Enter your solution below.
 
 ```elixir
+temperature = Enum.random(0..20)
 
+if temperature > 10 do
+  %{hot: temperature}
+else
+  %{cold: temperature}
+end
 ```
 
 ## Clear Control Flow
@@ -278,16 +284,18 @@ We can provide any number of cases. Cases use pattern matching to decide which r
 Return each value from `1` to `5` by changing the `condition` variable below.
 
 ```elixir
-condition = nil
+[condition | _tail] =
+  Enum.take_random([:red, "blue", %{key: "value"}, 123, [1, 2, 3], :anything, nil], 1)
 
-case condition do
-  :red -> 1
-  "blue" -> 2
-  %{key: "value"} -> 3
-  123 -> 4
-  [1, 2, 3] -> 5
-  _ -> "default"
-end
+{condition,
+ case condition do
+   :red -> 1
+   "blue" -> 2
+   %{key: "value"} -> 3
+   123 -> 4
+   [1, 2, 3] -> 5
+   _ -> "default"
+ end}
 ```
 
 ## Pattern Matching With Case
@@ -378,16 +386,29 @@ end
 Return each result from `1` to `5` by changing the `condition` variable below.
 
 ```elixir
-condition = nil
+[condition | _tail] =
+  Enum.take_random(
+    [
+      [1, 2, 3],
+      ["any"],
+      {"any", "any"},
+      %{key1: "any", key2: "value"},
+      {1, "any", %{key: [1, "any", "any"]}},
+      "any",
+      nil
+    ],
+    1
+  )
 
-case condition do
-  [1, 2, 3] -> 1
-  [_head | _tail] -> 2
-  {_, _} -> 3
-  %{key1: _, key2: "value"} -> 4
-  {1, _, %{key: [1, _, _]}} -> 5
-  _ -> "default"
-end
+{condition,
+ case condition do
+   [1, 2, 3] -> 1
+   [_head | _tail] -> 2
+   {_, _} -> 3
+   %{key1: _, key2: "value"} -> 4
+   {1, _, %{key: [1, _, _]}} -> 5
+   _ -> "default"
+ end}
 ```
 
 ## Cond
@@ -517,7 +538,15 @@ end
 </details>
 
 ```elixir
+grade = Enum.random(1..100)
 
+{grade,
+ cond do
+   grade >= 85 -> "A"
+   grade >= 70 -> "B"
+   grade >= 55 -> "C"
+   true -> "D"
+ end}
 ```
 
 ## Unless
@@ -571,7 +600,12 @@ In the Elixir cell below
 * Create an `unless` statement. which returns `"awake"` unless `tired`.
 
 ```elixir
+tired = Enum.random([true, false])
 
+{tired,
+ unless tired do
+   "awake"
+ end}
 ```
 
 ## Commit Your Progress
