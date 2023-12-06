@@ -1,5 +1,7 @@
 # A React Developer's Journal on Learning Elixir
 
+Elixir is a functional programming language.
+
 ## Course Tools
 
 ### Github Collab
@@ -165,6 +167,59 @@ Access values using their key with square bracket (or dot - only valid for atom 
 ```
 
 Can update Existing keys values using syntax `%{initial_map | updated_values}`.
+
+### Functions
+
+```exs
+# Create
+# Multiline fn return last line
+
+fn_wo_input = fn -> 3 + 3 end
+
+fn_w_input = fn fn_input -> 
+    first = fn_input + 3
+    first + 3
+end
+
+fn_short_syntax = &(&1 * (&2 + 3))
+
+# Execute
+
+fn_wo_input.() === 6
+
+fn_w_input.(3) === 9
+
+fn_short_syntax.(3, 1) === 12
+
+# Callback fn
+
+call_with_2 = fn callback -> callback.(2) end
+
+call_with_2.(fn int -> int + 3 end) === 5
+```
+
+Arity of the function is the number of parameters function accepts.
+
+Elixir's functions display as `function_name/arity` thus a function named add_two with two parameters is called add_two/2.
+
+#### Pipe Operator
+
+`|>` for chaining functions. Pipe operator allows you to take the output of one function and pass it in as an argument for the input of another function.
+
+```exs
+# Instead of
+four.(three.(two.(one.(1), 2)))
+# or
+a = one.(1)
+b = two.(a, 2)
+c = three.(b)
+d = four.(c)
+# Use Pipe operator
+
+one.(1) |> two.(2) |> three.() |> four.()
+
+1 |> one.() |> two.(2) |> three.() |> four.()
+```
 
 ### Pattern Matching
 
