@@ -216,6 +216,16 @@ one === 1
 # Raise error as key must be literals
 ```
 
+#### Range
+
+```exs
+start..finish//step = 1..10//2
+
+start === 1
+finish === 10
+step === 2
+```
+
 ## Control Flow And Abstraction
 
 ### Functions
@@ -634,4 +644,25 @@ initial = %MyStruct{key: "value"}
 updated = %{initial | key: "new value"}
 
 updated === %MyStruct{key: "new value"}
+```
+
+## Enumeration
+
+### Ranges
+
+Can be ascending or descending.
+
+```exs
+0..10 # from 0 -> 10
+5..-5 # from 5 -> 0 -> -5
+
+# Convert to list
+Enum.to_list(1..5) === [1,2,3,4,5]
+
+# With step
+0..11//2 # [0,2,4,6,8,10]
+
+# Pattern matching
+
+start..finish//step = 1..10//2
 ```
