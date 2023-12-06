@@ -666,3 +666,50 @@ Enum.to_list(1..5) === [1,2,3,4,5]
 
 start..finish//step = 1..10//2
 ```
+
+### Enum
+
+Enumeration is the act of looping through elements.
+
+Common used: `Enum.map/2`, `Enum.filter/2`, and `Enum.reduce/2`.
+
+```exs
+Enum.map([1, 2, 3, 4, 5], fn element -> element * 2 end) === Enum.map(1..5, fn element -> element * 2 end)
+
+# `Enum.reduce/2`: 1 Is The Initial Accumulator Value
+Enum.reduce(1..3, fn element, accumulator ->
+  element + accumulator
+end) === 6
+# `Enum.reduce/3`: 5 Is The Initial Accumulator Value
+Enum.reduce(1..3, 5, fn element, accumulator ->
+  element + accumulator
+end) === 11
+```
+
+Other useful:
+
+- `Enum.all/2` check if all elements in a collection match some condition.
+- `Enum.any?/2` check if any elements in a collection match some condition.
+- `Enum.count/2` return the number of elements in a collection collection.
+- `Enum.find/3` return an element in a collection that matches some condition. Middle variable of /3 is return value instead of nil if no match found.
+- `Enum.random/1` return a random element in a collection.
+
+#### Capture Operator And Module Functions
+
+Use `&` and Arity to provide module functions (mean built-in functions too).
+
+```exs
+my_function = fn element -> IO.inspect(element) end
+
+Enum.map(1..10, my_function)
+
+defmodule NonAnonymous do
+  def function(element) do
+    IO.inspect(element)
+  end
+end
+
+Enum.map(1..10, &NonAnonymous.function/1)
+
+Enum.map(1..10, &is_integer/1)
+```
