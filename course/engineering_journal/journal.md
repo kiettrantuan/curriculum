@@ -563,3 +563,75 @@ defmodule DoctestExample do
   end
 end
 ```
+
+### Structs
+
+Defined using `defstruct`.
+
+Struct is simply a short word for structure. They are an extension on top of maps that enforce constraints on your data.
+
+Instances of the struct will not be allowed to contain any data other than these keys.
+
+Actually implemented using maps under the hood.
+
+```exs
+defmodule StructName do
+  defstruct [:key1, :key2, :key3]
+end
+
+%StructName{} === %StructName{key1: nil, key2: nil, key3: nil}
+
+# Pass value to a struct key
+
+%StructName{key1: "value 1"}
+
+# create
+defmodule Person do
+  defstruct [:name]
+
+  def greet(person) do
+    "Hello, #{person.name}."
+  end
+end
+
+# execute
+person = %Person{name: "Peter"}
+
+Person.greet(person) === "Hello, Peter."
+```
+
+Structs can have keys with and without default value but Default keys MUST come LAST in the list.
+
+```exs
+defmodule DefaultKeys do
+  defstruct [:key1, key2: "default2"]
+end
+
+%DefaultKeys{} === %DefaultKeys{key1: nil, key2: "default2"}
+```
+
+`@enforce_keys` for ensure certain keys are set.
+
+```exs
+defmodule EnforcedNamePerson do
+  @enforce_keys [:name]
+  defstruct @enforce_keys ++ [:age]
+end
+
+# MUST set name
+%EnforcedNamePerson{name: "abc"}
+```
+
+Manipulate
+
+```exs
+defmodule MyStruct do
+  defstruct [:key]
+end
+
+initial = %MyStruct{key: "value"}
+
+updated = %{initial | key: "new value"}
+
+updated === %MyStruct{key: "new value"}
+```
