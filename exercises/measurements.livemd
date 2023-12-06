@@ -82,11 +82,21 @@ defmodule Measurements do
     [10, -10, 30]
   """
   def increments(measurements) do
+    obj =
+      Enum.reduce(measurements, fn curr, acc ->
+        if is_integer(acc) do
+          %{value: curr, return: [curr - acc]}
+        else
+          %{value: curr, return: acc.return ++ [curr - acc.value]}
+        end
+      end)
+
+    obj.return
   end
 
   @doc """
   Given a list of measurements as integers, determine how many have increased.
-  Each positive change since the previous integer in the list should count as an increase.
+  Each positive change since the valueious integer in the list should count as an increase.
 
   ## Examples
 
@@ -100,6 +110,9 @@ defmodule Measurements do
     1
   """
   def increased(measurements) do
+    measurements
+    |> increments()
+    |> Enum.count(fn int -> int > 0 end)
   end
 
   @doc """
@@ -115,6 +128,10 @@ defmodule Measurements do
     40
   """
   def increased_by(measurements) do
+    measurements
+    |> increments()
+    |> Enum.filter(fn int -> int > 0 end)
+    |> Enum.sum()
   end
 
   @doc """
@@ -130,6 +147,7 @@ defmodule Measurements do
     6.0
   """
   def average(measurements) do
+    Enum.sum(measurements) / Enum.count(measurements)
   end
 end
 ```
