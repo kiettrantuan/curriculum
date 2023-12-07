@@ -713,3 +713,65 @@ Enum.map(1..10, &NonAnonymous.function/1)
 
 Enum.map(1..10, &is_integer/1)
 ```
+
+## Built-in Modules
+
+Worth reading: [API Reference](https://hexdocs.pm/elixir/api-reference.html).
+
+List of Common modules (NOT ALL available modules):
+
+- Core module: `Kernel`.
+- Modules for Data Type: `Integer`, `String`, `List`, `Map`, `Keyword`, ...
+- Modules For Behavior: `Enum`, ...
+
+```exs
+# Get tuple elem by index
+Kernel.elem({3, 6, 9}, 1) === elem({3, 6, 9}, 1)
+elem({3, 6, 9}, 1) === 9
+
+# Check type `is_type(value_to_check)`
+Kernel.is_map(%{}) === is_map(%{})
+
+# max min
+max(100,200) === min(200,300)
+
+# Safe Convert any term Elixir into string
+inspect(%{}) === "%{}"
+```
+
+```exs
+# Parse list - un list
+Integer.digits(123) === [1,2,3]
+Integer.undigits([1,2,3]) === 123
+
+# Parse Int
+Integer.parse("25abc\n") === {25, "abc\n"}
+```
+
+- `Integer.gcd/2` gets greatest common denominator.
+
+- `String.at/2` gets the value at the index of a string.
+
+- `List.delete_at/2` remove an element at an index in a list.
+- `List.insert_at/3` insert an element at a specified index within a list.
+- `List.update_at/3` update an element at a specified index within a list.
+- `List.zip/1` combine elements from multiple lists into a single list of tuples
+
+```exs
+letters = ["a", "b", "c"]
+numbers = [1, 2, 3]
+
+List.zip([letters, numbers]) === [{"a", 1}, {"b", 2}, {"c", 3}]
+```
+
+- Map.get/3 retrieve values in a map.
+- Map.put/3 put a value into a map.
+- Map.keys/1 list the keys in a map.
+- Map.delete/2 remove a key and value from a map.
+- Map.merge/2 merge two maps together.
+- Map.update/4 and Map.update!/3 update a map using the existing value of the updated key.
+- Map.values/1 list the values in a map.
+
+- `Keyword.get/3` retrieve values in a keyword list.
+- `Keyword.keys/1` list the keys in a keyword list.
+- `Keyword.keyword?/`1 check if some data is a keyword list.
