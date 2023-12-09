@@ -764,14 +764,47 @@ numbers = [1, 2, 3]
 List.zip([letters, numbers]) === [{"a", 1}, {"b", 2}, {"c", 3}]
 ```
 
-- Map.get/3 retrieve values in a map.
-- Map.put/3 put a value into a map.
-- Map.keys/1 list the keys in a map.
-- Map.delete/2 remove a key and value from a map.
-- Map.merge/2 merge two maps together.
-- Map.update/4 and Map.update!/3 update a map using the existing value of the updated key.
-- Map.values/1 list the values in a map.
+- `Map.get/3` retrieve values in a map.
+- `Map.put/3` put a value into a map.
+- `Map.keys/1` list the keys in a map.
+- `Map.delete/2` remove a key and value from a map.
+- `Map.merge/2` merge two maps together.
+- `Map.update/4` and `Map.update/3` update a map using the existing value of the updated key.
+- `Map.values/1` list the values in a map.
 
 - `Keyword.get/3` retrieve values in a keyword list.
 - `Keyword.keys/1` list the keys in a keyword list.
-- `Keyword.keyword?/`1 check if some data is a keyword list.
+- `Keyword.keyword?/1` check if some data is a keyword list.
+
+## Comprehensions And Non-Enumerable Data Types
+
+### Non-Enumerables
+
+Data types that does not implement the Enumerable protocol, such as: integers, floats, **strings**, atoms, **tuples**.
+
+- Different from JS, **Strings** is Non-Enumerable. Mean we CAN NOT use `Enum` with plain strings type.
+- Also, `String.split` has slightly difference behavior.
+
+To Enumerate these types, simply convert they to enumerable type like Lists.
+
+```exs
+Integer.digits(123)
+Integer.undigits([1,2,3])
+
+Tuple.to_list({1, 2, 3})
+List.to_tuple([1, 2, 3])
+
+# Same as JS
+String.split("a,b,c,d", ",") === ["a", "b", "c", "d"]
+
+# Different from JS - default split whitespace
+String.split("hello world") === ["hello", "world"]
+# Different from JS - include empty string at start and end
+String.split("abcde", "") === ["", "a", "b", "c", "d", "e", ""]
+# Option to trim above empty string
+String.split("abcde", "", trim: true) === ["a", "b", "c", "d", "e"]
+
+Enum.join(["a", "b", "c"]) === Enum.join(["a", "b", "c"], "")
+# "abc" - default join by empty string
+
+```
