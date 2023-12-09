@@ -808,3 +808,75 @@ Enum.join(["a", "b", "c"]) === Enum.join(["a", "b", "c"], "")
 # "abc" - default join by empty string
 
 ```
+
+### Comprehensions
+
+Way to create new lists, maps, or sets by iterating over an existing collection and applying a set of transformations.
+
+Similar to `Enum.map/2`, `Enum.filter/2`, and `Enum.reduce/2` functions but with a more concise syntax => Enum syntax sugar that has 3 parts: **generators**, **filters**, and **collectables**.
+
+```exs
+generator = 1..3
+
+# Generator: enumerable data type 
+for element <- generator do
+  element * 2
+end === [2, 4, 6]
+
+# Filter: return true/false | element >= 2
+for element <- generator, element >= 2 do
+  element * 2
+end === [4, 6]
+
+# Collectable: `:into` collect the result to other data types than list
+for element <- generator, into: "" do
+  "#{element}"
+end === "123"
+
+for n <- 1..3, into: %{} do
+  {:"key_#{n}", n}
+end === %{key_1: 1, key_2: 2, key_3: 3}
+
+for n <- 1..3, into: %{default: "hello!"} do
+  {:"key_#{n}", n}
+end === %{default: "hello!", key_1: 1, key_2: 2, key_3: 3}
+
+# With Pattern matching
+for {:keep, value} <- [keep: 1, keep: 2, filter: 1, filter: 3] do
+  value
+end === [1, 2]
+
+for {key, value} <- %{a: 1, b: 2}, into: %{} do
+  {key, value * 2}
+end === %{a: 2, b: 4}
+```
+
+#### Multiple - Nested Loop
+
+We can use multiple comma-separated generators, filters in a single comprehension.
+
+The comprehension treats each additional generator like a **nested loop**. For each element in the first loop, it will enumerate through every element in the second loop.
+
+```exs
+# Multi generators
+for a <- 1..3, b <- 4..6 do
+  {a, b}
+end === [
+  {1, 4}, {1, 5}, {1, 6},
+  {2, 4}, {2, 5}, {2, 6},
+  {3, 4}, {3, 5}, {3, 6}
+]
+
+# Multi filters
+for a <- 1..100, rem(a, 3) === 0, rem(a, 5) === 0 do
+  a
+end === [15, 30, 45, 60, 75, 90]
+
+# Multi generators, filters
+for a <- 1..45, b <- 1..5, rem(a, 5) === 0, rem(b, 5) === 0 do
+  [a, b]
+end === for a <- 1..45, rem(a, 5) === 0, b <- 1..5, rem(b, 5) === 0 do
+  [a, b]
+end
+# [[5, 5], [10, 5], [15, 5], [20, 5], [25, 5], [30, 5], [35, 5], [40, 5], [45, 5]]
+```
