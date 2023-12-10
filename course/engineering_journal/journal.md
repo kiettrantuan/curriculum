@@ -175,7 +175,13 @@ Access values using their key with square bracket (or dot - only valid for atom 
 %{1 => %{2 => %{3 => "value"}}}[1][2][4] === nil
 ```
 
-Can update Existing keys values using syntax `%{initial_map | updated_values}`.
+Can update **Existing** keys values using syntax `%{initial_map | updated_values}`.
+
+```exs
+initial = %{count: 1}
+
+%{initial | count: 2}
+```
 
 ## Pattern Matching
 
@@ -888,4 +894,80 @@ end === for a <- 1..45, rem(a, 5) === 0, b <- 1..5, rem(b, 5) === 0 do
   [a, b]
 end
 # [[5, 5], [10, 5], [15, 5], [20, 5], [25, 5], [30, 5], [35, 5], [40, 5], [45, 5]]
+```
+
+## Dates And Times
+
+`Date` structs store `year`, `month`, `day` and some other related fields.
+
+```exs
+# new `year`, `month`, `day`
+{:ok, date} = Date.new(2000, 10, 1)
+
+date.year === 2000
+date.month === 10
+date.day === 1
+```
+
+`Time` structs store `hour`, `minute`, `second`.
+
+```exs
+# new `hour`, `minute`, `second`
+{:ok, time} = Time.new(12, 30, 10)
+
+time.hour === 12
+time.minute === 30
+time.second === 10
+```
+
+`DateTime` is a hybrid of `Date` and `Time`. It actually structs which can be `Map.from_struct`.
+
+```exs
+# new `date`, `time`
+{:ok, datetime} = DateTime.new(date, time)
+
+Map.from_struct(datetime) === %{
+  microsecond: {0, 0},
+  second: 10,
+  calendar: Calendar.ISO,
+  month: 10,
+  day: 1,
+  year: 2000,
+  minute: 30,
+  hour: 12,
+  time_zone: "Etc/UTC",
+  zone_abbr: "UTC",
+  utc_offset: 0,
+  std_offset: 0
+}
+```
+
+> **`Timex`** is a recommended Library for handling dates/times, supports timezone.
+
+### Sigils
+
+`Sigils` is textual representation of data. We can use its syntax to create `Date`, `Time`, and `DateTime`.
+
+Sigils syntax use a tilda `~` and a character for the type of data they represent, such as: `U` is UTC datetime.
+
+```exs
+date = ~D[2000-10-01]
+time = ~T[12:30:10]
+# The Z Offset Specifies The Timezone Offset. Z Is Zero For UTC.
+datetime = ~U[2000-10-01 12:30:10Z]
+
+DateTime.new(date, time) === datetime
+DateTime.new(~D[2000-10-01], ~T[12:30:10]) === datetime
+```
+
+### Calendar
+
+[Formatting Syntax](https://hexdocs.pm/elixir/Calendar.html#strftime/3-accepted-formats)
+
+```exs
+# `strftime`: String from Time
+
+Calendar.strftime(~U[2000-10-01 12:30:10Z], "%y-%m-%d %I:%M:%S %p") === "00-10-01 12:30:10 PM"
+
+Calendar.strftime(~U[2000-10-01 12:30:10Z], "%Y-%m-%D %I:%M:%S %p") === "2000-10-01 12:30:10 PM"
 ```
