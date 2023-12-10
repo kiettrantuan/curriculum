@@ -126,11 +126,35 @@ end
 ```elixir
 defmodule Products do
   def all_items do
+    names = ["computer", "phone", "tablet"]
+    prices = 1..100
+
+    for name <- names, price <- prices do
+      %{name: name, price: price}
+    end
   end
 
   def search(items, filters) do
+    for item <- items,
+        Enum.reduce_while(filters, true, fn {k, v}, acc ->
+          cond do
+            k === :min and item.price >= v -> {:cont, acc}
+            k === :max and item.price <= v -> {:cont, acc}
+            k === :name and item.name === v -> {:cont, acc}
+            true -> {:halt, false}
+          end
+        end) do
+      item
+    end
   end
 end
+
+all_items = Products.all_items()
+
+%{
+  min_max: Products.search(all_items, min: 10, max: 10),
+  min_max_name: Products.search(all_items, min: 10, max: 15, name: "computer")
+}
 ```
 
 ## Commit Your Progress
