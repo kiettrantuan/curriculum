@@ -83,6 +83,7 @@ defmodule Anagram do
     true
   """
   def anagram?(word, possible_anagram) do
+    String.bag_distance(word, possible_anagram) === 1.0
   end
 
   @doc """
@@ -100,6 +101,9 @@ defmodule Anagram do
     []
   """
   def filter_anagrams(word_list, anagram) do
+    for word <- word_list, anagram?(word, anagram) do
+      word
+    end
   end
 end
 ```
@@ -127,8 +131,35 @@ defmodule AnagramSolver do
 
     iex> AnagramSolver.solve("abc")
     ["abc", "acb", "bac", "bca", "cab", "cba"]
+
+
+    iex> AnagramSolver.solve("abcd")
+    [
+      "abcd", "abdc", "acbd", "acdb", "adbc", "adcb",
+      "bacd", "badc", "bcad", "bcda", "bdac", "bdca",
+      "cabd", "cadb", "cbad", "cbda", "cdab", "cdba",
+      "dabc", "dacb", "dbac", "dbca", "dcab", "dcba"
+    ]
   """
+  def re(string, start_idx, last_idx) do
+    if start_idx === last_idx do
+      string
+    else
+      char_list = String.split(string, "", trim: true)
+
+      for idx <- start_idx..last_idx do
+        char_list
+        |> List.replace_at(idx, String.at(string, start_idx))
+        |> List.replace_at(start_idx, String.at(string, idx))
+        |> List.to_string()
+        |> re(start_idx + 1, last_idx)
+      end
+    end
+  end
+
   def solve(string) do
+    last_id = String.length(string) - 1
+    [re(string, 0, last_id)] |> List.flatten() |> Enum.sort()
   end
 end
 ```

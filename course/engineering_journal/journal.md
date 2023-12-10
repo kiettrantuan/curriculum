@@ -26,6 +26,15 @@ line 2
 
 - Interpolation: `#{value}`
 - Escaping: `\`
+- `bag_distance/2` is pretty cool (return a float define the percentage of matching characters between 2 strings ?)
+
+```exs
+String.bag_distance("cats", "dogs") === 0.25
+
+String.bag_distance("robed", "bored") === 1.0
+
+String.bag_distance("robed", "bored-robe") === 0.5
+```
 
 ### Comparison Operators
 
@@ -40,7 +49,7 @@ You can compare different data types to each other in the following [Sorting Ord
 number < atom < reference < function < port < pid < tuple < map < list < bitstring 
 ```
 
-## Data Structures And Intro To Pattern Matching
+## Data Structures
 
 ### Atoms
 
