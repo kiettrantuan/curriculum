@@ -133,7 +133,11 @@ defmodule Lucas do
     iex> Lucas.number(20)
     15127
   """
+  def number(0), do: 2
+  def number(1), do: 1
+
   def number(n) do
+    number(n - 1) + number(n - 2)
   end
 
   @doc """
@@ -157,7 +161,21 @@ defmodule Lucas do
     [2, 1, 3, 4, 7, 11, 18, 29, 47, 76]
   """
 
+  # I don't think call number/1 in map/2 is better than below
   def sequence(length) do
+    Enum.reduce(1..length, %{prev1: 2, prev2: 1, res: []}, fn curr, acc ->
+      case curr do
+        1 ->
+          %{acc | res: [2]}
+
+        2 ->
+          %{acc | res: [2, 1]}
+
+        _ ->
+          value = acc.prev1 + acc.prev2
+          %{prev1: acc.prev2, prev2: value, res: acc.res ++ [value]}
+      end
+    end).res
   end
 end
 ```
