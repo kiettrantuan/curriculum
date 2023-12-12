@@ -14,6 +14,8 @@ A OSS Contributor can contribute in many forms, such as writing code, fixing bug
 
 ### Strings
 
+Strings in Elixir are represented internally as **binaries**.
+
 - Concatenation: `<>`
 - Multi lines:
 
@@ -709,6 +711,13 @@ Other useful:
 - `Enum.find/3` return an element in a collection that matches some condition. Middle variable of /3 is return value instead of nil if no match found.
 - `Enum.random/1` return a random element in a collection.
 
+**`Enum.chunk..` may very useful**
+
+```exs
+[1,2,3,4,5]
+|> Enum.chunk_every(2, 1, :discard) === [[1,2], [2,3], [3,4], [4,5]]
+```
+
 #### Capture Operator And Module Functions
 
 Use `&` and Arity to provide module functions (mean built-in functions too).
@@ -746,6 +755,7 @@ elem({3, 6, 9}, 1) === 9
 
 # Check type `is_type(value_to_check)`
 Kernel.is_map(%{}) === is_map(%{})
+Kernel.is_binary("hello") === true
 
 # max min
 max(100,200) === min(200,300)
@@ -970,4 +980,69 @@ DateTime.new(~D[2000-10-01], ~T[12:30:10]) === datetime
 Calendar.strftime(~U[2000-10-01 12:30:10Z], "%y-%m-%d %I:%M:%S %p") === "00-10-01 12:30:10 PM"
 
 Calendar.strftime(~U[2000-10-01 12:30:10Z], "%Y-%m-%D %I:%M:%S %p") === "2000-10-01 12:30:10 PM"
+```
+
+## Strings and Binaries
+
+To check if a value is a string, we use the `is_binary/1` function. That's because strings in Elixir are represented internally as binaries (bitstring).
+
+Use `?` to find codepoint of a character.
+
+```exs
+?A === 65
+?a === 97
+
+# Charlist
+[104, 101, 108, 108, 111] === ~c"hello" 
+
+# Bitstring to String
+<<104, 101, 108, 108, 111>> === "hello"
+
+# hex
+"\u0065" === "e" # as 0x65 === 101 === ?e
+```
+
+**Generally** each character is store in 1 byte (= 8 bits).
+Elixir uses UTF-8 to encode it's strings, meaning that each code point is encoded as a series of 8-bit bytes (cause 1 byte store integer max = 255).
+
+```exs
+byte_size("h") === 1
+bit_size("h") === 8
+
+byte_size("hello") === 5
+bit_size("hello") === 40
+
+byte_size("é") === 2
+```
+
+Be careful when splitting a string for enumeration, we can use `graphemes("abc")` instead `split("abc", "", trim: true)`.
+
+```exs
+String.graphemes("👩‍🚒") === ["👩‍🚒"]
+String.codepoints("👩‍🚒") === ["👩", "‍", "🚒"]
+
+noel = "noe\u0308l" # "noël"
+String.codepoints(noel) === ["n", "o", "e", "̈", "l"]
+String.graphemes(noel) === ["n", "o", "ë", "l"]
+```
+
+**Charlist** is a **List** of valid code points.
+
+```exs
+[?h, ?e, ?l, ?l, ?o] === [104, 101, 108, 108, 111]
+
+~c"hello"  === [?h, ?e, ?l, ?l, ?o]
+~c"hello"  === [104, 101, 108, 108, 111]
+~c"hello"  === 'hello'
+
+List.to_string(~c"hello") === "hello"
+String.to_charlist("hello") === ~c"hello"
+
+Enum.map(~c"abcde", fn each -> each + 1 end) === ~c"bcdef"
+
+"abcdefghijklmnopqrstuvwxyz"
+|> String.to_charlist
+|> IO.inspect(charlists: :as_lists)
+# Print a list of codepoints
+# [97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122]
 ```
