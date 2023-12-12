@@ -260,7 +260,24 @@ end
 
 ```elixir
 defmodule CountDown do
+  def count(0) do
+    IO.puts(0)
+  end
+
+  def count(int) do
+    IO.puts(int)
+
+    if int > 0 do
+      count(int - 1)
+    else
+      count(int + 1)
+    end
+  end
 end
+
+CountDown.count(5)
+
+CountDown.count(-5)
 ```
 
 ### Your Turn
@@ -322,8 +339,42 @@ end
 </details>
 
 ```elixir
+# defmodule CountBetween do
+#   def count(start, finish) do
+#     cond do
+#       start === finish ->
+#         IO.puts(start)
+
+#       start < finish ->
+#         IO.puts(start)
+#         count(start + 1, finish)
+
+#       start > finish ->
+#         IO.puts(start)
+#         count(start - 1, finish)
+#     end
+#   end
+# end
+
+# Does this more Optimize than Above ? Maybe not but this is Cleaner
 defmodule CountBetween do
+  def count(finish, finish) do
+    IO.puts(finish)
+  end
+
+  def count(start, finish) when start < finish do
+    IO.puts(start)
+    count(start + 1, finish)
+  end
+
+  def count(start, finish) when start > finish do
+    IO.puts(start)
+    count(start - 1, finish)
+  end
 end
+
+CountBetween.count(2, 5)
+CountBetween.count(10, 5)
 ```
 
 ## Commit Your Progress

@@ -1139,3 +1139,48 @@ Regex.match?(
   "+1 (111)-111-1111"
 ) === true
 ```
+
+## Recursion
+
+Elixir can **optimize recursive functions if its tail-call** (the last thing it does is call itself). Otherwise, if the function calls itself in the body, it's called **body-recursion which is not optimized**.
+
+```exs
+defmodule RecursiveSum do
+  def sum(list, accumulator \\ 0) do
+    case list do
+      [] -> accumulator
+      [head | tail] -> sum(tail, accumulator + head)
+    end
+  end
+end
+
+defmodule BaseCaseExample do
+  def sum([], accumulator), do: accumulator
+  def sum([head | tail], accumulator), do: sum(tail, accumulator + head)
+end
+
+RecursiveSum.sum([1, 2, 3], 0) === 6
+
+BaseCaseExample.sum([1, 2, 3], 0) === 6
+```
+
+Code block below will be optimize: **Recommended Format**.
+
+```exs
+defmodule CountBetween do
+  def count(finish, finish), do: IO.puts(finish)
+
+  def count(start, finish) when start < finish do
+    IO.puts(start)
+    count(start + 1, finish)
+  end
+
+  def count(start, finish) when start > finish do
+    IO.puts(start)
+    count(start - 1, finish)
+  end
+end
+
+CountBetween.count(2, 5)
+CountBetween.count(10, 5)
+```
