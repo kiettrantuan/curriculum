@@ -75,6 +75,8 @@ phone number expressions in the string.
 
 You can replace expressions one at a time, rather than all at once.
 
+Bonus: Try using 1 or 2 replace.
+
 </details>
 
 <details style="background-color: lightgreen; padding: 1rem; margin: 1rem 0;">
@@ -91,6 +93,21 @@ defmodule PhoneNumber
     |> String.replace(~r/\((\d{3})\)-(\d{3})-(\d{4})/, replacement)
     |> String.replace(~r/\((\d{3})\) (\d{3}) (\d{4})/, replacement)
     |> String.replace(~r/\((\d{3})\)(\d{3})-(\d{4})/, replacement)
+  end
+end
+```
+Bonus: Using 1 replace.
+
+* `\D*`: match 0 or more character NOT digit.
+* `\s?`: match 0 or 1 whitespace.
+* `String.trim`: to remove last whitespace
+
+```elixir
+defmodule PhoneNumber
+  def parse(string) do
+    Regex.replace(~r/\D*(\d{3})\D*(\d{3})\D*(\d{4}\s?)\D*/, string, fn _full, group1, group2, group3 ->
+      group1 <> "-" <> group2 <> "-" <> group3
+    end) |> String.trim
   end
 end
 ```
@@ -122,13 +139,20 @@ defmodule PhoneNumber do
     iex> PhoneNumber.parse("(123) 123 1234")
     "123-123-1234"
 
-    iex> PhoneNumber.parse("(123)123-1234")
+    iex> PhoneNumber.parse("(123)123-1234. ")
     "123-123-1234"
 
     iex> PhoneNumber.parse("1231231234 4564564567")
     "123-123-1234 456-456-4567"
+
+    iex> PhoneNumber.parse("1231231234 4564564567 ")
+    "123-123-1234 456-456-4567"
   """
   def parse(string) do
+    Regex.replace(~r/\D*(\d{3})\D*(\d{3})\D*(\d{4}\s?)\D*/, string, fn _fm, g1, g2, g3 ->
+      g1 <> "-" <> g2 <> "-" <> g3
+    end)
+    |> String.trim()
   end
 end
 ```
