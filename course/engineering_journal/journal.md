@@ -1021,7 +1021,7 @@ Be careful when splitting a string for enumeration, we can use `graphemes("abc")
 String.graphemes("👩‍🚒") === ["👩‍🚒"]
 String.codepoints("👩‍🚒") === ["👩", "‍", "🚒"]
 
-noel = "noe\u0308l" # "noël"
+noel = "noël" # "ë" === "e\u0308"
 String.codepoints(noel) === ["n", "o", "e", "̈", "l"]
 String.graphemes(noel) === ["n", "o", "ë", "l"]
 ```
@@ -1045,4 +1045,97 @@ Enum.map(~c"abcde", fn each -> each + 1 end) === ~c"bcdef"
 |> IO.inspect(charlists: :as_lists)
 # Print a list of codepoints
 # [97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122]
+```
+
+## Regex
+
+Use `~r` sigil with `//` to create a Regex.
+
+```exs
+~r/hello/
+```
+
+### Module Regex
+
+```exs
+Regex.match?(~r/ll/, "hello hello") === true
+String.match?("hello hello", ~r/ll/) === true
+
+# find
+Regex.run(~r/ll/, "hello hello") === ["ll"]
+
+# find ALL
+Regex.scan(~r/ll/, "hello hello") === [["ll"], ["ll"]]
+
+# replace ALL (by default)
+Regex.replace(~r/el/, "hello hello", "a") === "halo halo"
+String.replace("hello hello", ~r/el/, "a") === "halo halo"
+
+# split on matches
+Regex.split(~r/\d/, "one1two2three") === ["one", "two", "three"]
+String.split("one1two2three", ~r/\d/) === ["one", "two", "three"]
+```
+
+- `\d` digit.
+- `\w` word character.
+- `.` non-newline character (essentially anything).
+- `\s` whitespace character.
+
+- `*` 0 or more times.
+- `+` one or more times.
+- `?` zero or one time.
+- `{}` specify the number of times.
+
+- `[]` range of digits or letters.
+- `|` OR.
+- `^` NOT.
+
+- `()` capture groups.
+
+- `(?=)` positive lookahead. Match expressions **Followed** by another.
+- `(?!)` negative lookahead. Match expressions **NOT Followed** by another.
+- `(?<=)` positive lookbehind. Match expressions **Preceded** by another.
+- `(?<!)` negative lookbehind. Match expressions **NOT Preceded** by another.
+
+```exs
+Regex.run(~r/(a)(b)/, "ab") === ["ab", "a", "b"] # match "ab" ? -> match "a" ? -> match "b" ?
+
+Regex.run(~r/(ab)/, "ab") === ["ab", "ab"] # match "ab" ? -> match "ab" ?
+
+Regex.replace(~r/(\d{3})-\d{3}-(\d{4})/, "111-111-1111", fn match, group1, group2 ->
+  "g1-" <> group1 <> "XXX" <> "g2-" <> group2
+end) === "g1-111-XXX-g2-1111"
+
+# match "a" followed by "u" -> "au" -> return "a" without "u"
+Regex.scan(~r/a(?=u)/, "a au") === [["a"]]
+
+# match "a" NOT followed by "u" -> "at", "a" -> return "a", "a"
+Regex.scan(~r/a(?!u)/, "at a au") === [["a"], ["a"]]
+
+# match `word+` preceded by `a digit with period` and followed by `a period`
+Regex.scan(~r/(?<=\d\. )\w+(?=\.)/, "
+1. one.
+2. two
+3. three.
+") === [["one"], ["three"]] 
+```
+
+### Options
+
+- `m`: patterns such as start of line `^` and end of line `$` will match multiple lines instead of just the string.
+- `x`: Regular expressions can be written on multiple lines and documented.
+
+```exs
+Regex.match?(
+  ~r/
+\+\d{1,3} # country code i.e. +1
+\s        # space  
+\(\d{3}\) # area code i.e. (555)
+-         # dash
+(\d{3}    # prefix i.e. 555
+-         # dash
+\d{4})    # line number i.e. 5555
+/x,
+  "+1 (111)-111-1111"
+) === true
 ```
