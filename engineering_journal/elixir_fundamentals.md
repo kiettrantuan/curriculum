@@ -1,4 +1,4 @@
-# A React Developer's Journal on Learning Elixir
+# Elixir Fundamentals
 
 Elixir is a functional programming language.
 
@@ -191,7 +191,7 @@ initial = %{count: 1}
 
 Ignored variables are led by an underscore `_`
 
-#### Tuple
+### Tuple
 
 ```exs
 {1, 2, 3} = {1, 2, 3}
@@ -199,7 +199,7 @@ my_tuple = {1, 2, 3}
 {one, _two, three} = {1, 2, 3}
 ```
 
-#### List
+### List
 
 ```exs
 [first] = [1]
@@ -211,7 +211,7 @@ my_tuple = {1, 2, 3}
 # fist = 1, second = 2, rest = [3, 4, 5, 6]
 ```
 
-#### Keyword List
+### Keyword List
 
 ```exs
 [hello: my_variable] = [hello: "world"]
@@ -222,7 +222,7 @@ k === :key
 v === "value"
 ```
 
-#### Map
+### Map
 
 Unlike List, Map don't have to match on every key-value pair and can NOT be pattern match the key.
 
@@ -233,7 +233,7 @@ one === 1
 # Raise error as key must be literals
 ```
 
-#### Range
+### Range
 
 ```exs
 start..finish//step = 1..10//2
