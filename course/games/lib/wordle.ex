@@ -38,7 +38,7 @@ defmodule Games.Wordle do
         current_answer = Enum.at(answer_list, idx)
         current_guess = Enum.at(guess_list, idx)
 
-        if(current_guess === current_answer) do
+        if current_guess === current_answer do
           %{acc | res: acc.res ++ [:green]}
         else
           updated =
