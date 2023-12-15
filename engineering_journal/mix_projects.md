@@ -188,4 +188,4 @@ ExUnit.configure(exclude: :my_tag)
 - **ExDoc**: Generates documentation for Elixir projects, making code easier to understand and use.
 - **Credo**: Checks Elixir code for issues, promotes coding standards, and catches common mistakes.
 - **Dialyzer**: Performs static analysis on Elixir code, identifies potential errors, and improves code reliability.
-- **Typespecs**: Annotations that specify types in Elixir code, enhancing readability and enabling better error checking with tools like Dialyzer.
+- [**Typespecs**](https://hexdocs.pm/elixir/typespecs.html#basic-types): Annotations that specify types in Elixir code, enhancing readability and enabling better error checking with tools like Dialyzer.
