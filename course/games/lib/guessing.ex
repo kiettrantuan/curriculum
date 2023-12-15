@@ -10,10 +10,12 @@ defmodule Games.Guessing do
 
     cond do
       guess === answer ->
-        IO.puts("You win!")
+        IO.puts("You win!\n")
+        Games.main()
 
       attempts === 5 ->
-        IO.puts("You lose! the answer was #{answer}")
+        IO.puts("You lose! the answer was #{answer}\n")
+        Games.main()
 
       guess < answer ->
         IO.puts("Too Low!")

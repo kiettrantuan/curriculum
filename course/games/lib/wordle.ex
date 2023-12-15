@@ -22,9 +22,11 @@ defmodule Games.Wordle do
     cond do
       guess === answer ->
         IO.puts("You win!\n")
+        Games.main()
 
       attempts === 5 ->
         IO.puts("You lose! the answer was #{answer}\n")
+        Games.main()
 
       true ->
         retry(answer, attempts + 1)

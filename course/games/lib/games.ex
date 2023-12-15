@@ -15,20 +15,23 @@ defmodule Games do
     int + int
   end
 
-  def play do
+  def main(_args \\ nil) do
     IO.gets("""
-    Enter the game id you want to play:
 
-    1. Guessing
+    What game would you like to play?
+    1. Guessing Game
     2. Rock Paper Scissors
     3. Wordle
+
+    enter "stop" to exit
 
     """)
     |> case do
       "1\n" -> Games.Guessing.play()
       "2\n" -> Games.RockPaperScissors.play()
       "3\n" -> Games.Wordle.play()
-      _ -> IO.puts("Not existed!")
+      "stop\n" -> nil
+      _ -> IO.puts("Not existed!\n")
     end
   end
 end

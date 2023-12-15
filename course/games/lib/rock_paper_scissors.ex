@@ -38,9 +38,9 @@ defmodule Games.RockPaperScissors do
         p1_win(user, ai) === true -> IO.puts("You win! #{user} beats #{ai}.\n")
         true -> IO.puts("You close! #{ai} beats #{user}.\n")
       end
-
-      retry()
     end
+
+    Games.main()
   end
 
   def play do
