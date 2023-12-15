@@ -21,11 +21,13 @@ defmodule Games do
 
     1. Guessing
     2. Rock Paper Scissors
+    3. Wordle
 
     """)
     |> case do
-      "1\n" -> Games.GuessingGame.play()
-      "2\n" -> Games.RockPaperScissorsGame.play()
+      "1\n" -> Games.Guessing.play()
+      "2\n" -> Games.RockPaperScissors.play()
+      "3\n" -> Games.Wordle.play()
       _ -> IO.puts("Not existed!")
     end
   end

@@ -1,4 +1,7 @@
 defmodule Games.Wordle do
+  @moduledoc """
+  Documentation for `Games.Wordle`
+  """
   def retry(answer, attempts \\ 0) do
     guess =
       IO.gets("\nEnter a five letter word: ")
@@ -28,6 +31,17 @@ defmodule Games.Wordle do
     end
   end
 
+  @doc """
+  List of atom colors for each character between guess and answer
+
+  ## Examples
+      iex> Games.Wordle.feedback("toast", "toast")
+      [:green, :green, :green, :green, :green]
+
+      iex> Games.Wordle.feedback("toast", "tarts")
+      [:green, :yellow, :grey, :yellow, :yellow]
+  """
+  @spec feedback(String.t(), String.t()) :: [atom()]
   def feedback(answer, guess) do
     answer_list = String.split(answer, "", trim: true)
     guess_list = String.split(guess, "", trim: true)

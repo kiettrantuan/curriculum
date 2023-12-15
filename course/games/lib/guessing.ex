@@ -1,4 +1,7 @@
-defmodule Games.GuessingGame do
+defmodule Games.Guessing do
+  @moduledoc """
+  Documentation for `Games.Guessing`
+  """
   def retry(answer, attempts \\ 0) do
     guess =
       IO.gets("Enter your guess: ")

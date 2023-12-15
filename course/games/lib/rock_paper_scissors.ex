@@ -1,4 +1,22 @@
-defmodule Games.RockPaperScissorsGame do
+defmodule Games.RockPaperScissors do
+  @moduledoc """
+  Documentation for `Games.RockPaperScissors`
+  """
+
+  @doc """
+  whether player 1 win or not
+
+  ## Examples
+      iex> Games.RockPaperScissors.p1_win("rock", "scissors")
+      true
+
+      iex> Games.RockPaperScissors.p1_win("scissors", "rock")
+      false
+
+      iex> Games.RockPaperScissors.p1_win("paper", "paper")
+      false
+  """
+  @spec p1_win(String.t(), String.t()) :: boolean()
   def p1_win(p1, p2) do
     {p1, p2} in [{"rock", "scissors"}, {"scissors", "paper"}, {"paper", "rock"}]
   end
