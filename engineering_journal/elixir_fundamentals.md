@@ -1304,3 +1304,38 @@ case {:ok, 2} do
   {:ok, generic_value} -> "clause 2"
 end === "clause 1" # WRONG
 ```
+
+## Guards
+
+```exs
+defmodule RockPaperScissors do
+  defguard is_guess(guess) when guess in [:rock, :paper, :scissors]
+
+  def winner(guess) when is_guess(guess) do
+    case guess do
+      :rock -> :paper
+      :scissors -> :rock
+      :paper -> :rock
+    end
+  end
+end
+
+RockPaperScissors.winner(:rock) === :paper
+
+RockPaperScissors.winner("invalid guess") # Error
+```
+
+```exs
+defmodule PolymorphicGuardExample do
+  def double(num) when is_number(num) do
+    num * 2
+  end
+
+  def double(string) when is_binary(string) do
+    string <> " " <> string
+  end
+end
+
+PolymorphicGuardExample.double(2) === 4
+PolymorphicGuardExample.double("example") === "example example"
+```
