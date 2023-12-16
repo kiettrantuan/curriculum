@@ -70,8 +70,17 @@ defmodule Replace do
 
   iex> Replace.nils([nil, nil, nil, nil, "5"], [1, 2, 3, 4, 5])
   [1, 2, 3, 4, "5"]
+
+  iex> Replace.nils([], [])
+  []
   """
-  def nils(list1, list2) do
+  def nils([], []), do: []
+
+  def nils([head1 | tail1] = _list1, [head2 | tail2] = _list2) do
+    case head1 do
+      nil -> [head2] ++ nils(tail1, tail2)
+      _ -> [head1] ++ nils(tail1, tail2)
+    end
   end
 end
 ```
