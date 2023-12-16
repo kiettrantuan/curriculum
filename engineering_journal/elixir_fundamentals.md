@@ -1339,3 +1339,67 @@ end
 PolymorphicGuardExample.double(2) === 4
 PolymorphicGuardExample.double("example") === "example example"
 ```
+
+## With
+
+`with` is a control structure that provides a convenient way to handle multiple expressions and pattern match on their results. It allows you to chain together a sequence of expressions and evaluate them one by one, stopping if any of them return an error or a pattern match fails.
+
+```exs
+with {:ok, v1} <- check1(),
+     {:ok, v2} <- check2(v1),
+     {:ok, v3} <- check3(v2),
+     {:ok, v4} <- check4(v3),
+     {:ok, _} <- check5(v4) do
+  # code that requires successful results above
+end
+
+# Same as 
+
+case action1() do
+  {:ok, v1} ->
+  case action2(v1) do
+    {:ok, v2} ->
+      case action3(v2) do
+        {:ok, v3} -> 
+          case action4(v3) do
+            {:ok, v4} -> 
+              case check5(v4) do
+                {:ok, _} -> 
+                  # code that requires successful results above.
+              end
+          end
+      end
+  end
+end
+```
+
+With Else
+
+```exs
+user = %{name: "Jon", is_admin: false}
+
+with %{name: name, is_admin: true} <- user do
+  IO.puts("admin #{name} is authorized.")
+else
+  %{is_admin: false, name: name} ->
+    IO.puts("#{name} is not an admin")
+
+  %{is_admin: false} ->
+    IO.puts("Unknown user is not an admin")
+
+  _ ->
+    IO.puts("Something went wrong!")
+end
+
+value = "example"
+
+with {:not_binary, true} <- {:not_binary, is_binary(value)},
+     {:too_long, true} <- {:too_long, String.length(value) <= 10},
+     {:too_short, true} <- {:too_short, 2 <= String.length(value)} do
+  IO.puts("success")
+else
+  {:not_binary, _} -> IO.puts("value is not binary")
+  {:too_long, _} -> IO.puts("value is too long")
+  {:too_short, _} -> IO.puts("value is too short")
+end
+```
