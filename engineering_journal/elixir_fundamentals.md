@@ -185,7 +185,7 @@ initial = %{count: 1}
 %{initial | count: 2}
 ```
 
-## Pattern Matching
+## Pattern Matching - Basic
 
 `=` sign is the `match operator` because it uses pattern matching to bind variables.
 
@@ -1183,4 +1183,124 @@ end
 
 CountBetween.count(2, 5)
 CountBetween.count(10, 5)
+```
+
+## Pattern Matching - Advanced
+
+Behave based on data shape
+
+```exs
+case {1, 2} do
+  [a, b] -> "behavior for list" 
+  {a, b} -> "behavior for tuple"
+end === "behavior for tuple"
+
+case [1, 2, 3] do
+  [head | tail] = list ->
+    IO.inspect(head, label: "head")
+    IO.inspect(tail, label: "tail")
+    IO.inspect(list, label: "list")
+end
+
+# head: 1
+# tail: [2, 3]
+# list: [1, 2, 3]
+
+anonymous_run = fn
+  [] -> "1"
+  [_] -> "2"
+  [_, _] -> "3"
+end
+
+anonymous_run.([]) === "1"
+anonymous_run.([1]) === "2"
+anonymous_run.([1, 1]) === "3"
+
+enumerable = [double: 1, double: 2, triple: 3, quadruple: 4]
+
+Enum.map(enumerable, fn
+  {:double, value} -> value * 2
+  {:triple, value} -> value * 3
+  {:quadruple, value} -> value * 4
+end) === [2, 4, 9, 16]
+
+enumerable = [add: 1, subtract: 2, add: 4, multiply: 3]
+
+Enum.reduce(enumerable, 0, fn
+  {:add, value}, acc -> acc + value
+  {:subtract, value}, acc -> acc - value
+  {:multiply, value}, acc -> acc * value
+end) === 9
+
+enumerable = [keep: 1, remove: 2, keep: 4, remove: 1]
+
+Enum.filter(enumerable, fn
+  {:keep, _} -> true
+  {:remove, _} -> false
+end) === [keep: 1, keep: 4]
+
+defmodule PatternParamExample do
+  def inspect([a, b, c] = param1) do
+    IO.inspect(a, label: "a")
+    IO.inspect(b, label: "b")
+    IO.inspect(c, label: "c")
+    IO.inspect(param1, label: "param1")
+  end
+end
+
+PatternParamExample.inspect([1, 2, 3])
+
+# a: 1
+# b: 2
+# c: 3
+# param1: [1, 2, 3]
+
+defmodule MessageMatchExample do
+  def send(%{is_admin: true}, "") do
+    {:error, :empty_message}
+  end
+
+  def send(%{is_admin: true}, message) do
+    {:ok, message}
+  end
+
+  def send(%{is_admin: false}, _) do
+    {:error, :not_authorized}
+  end
+end
+
+MessageMatchExample.send(%{is_admin: true}, "") === {:error, :empty_message}
+```
+
+The **pin operator** allows us to use variables as hard-coded values, rather than rebinding a variable.
+
+```exs
+received = [1, 2]
+expected = [1, 2, 3]
+
+^received = expected # [1,2] = [1,2,3] -> Error
+
+first = 1
+actual = [2, 2, 3]
+
+[^first, 2, 3] = actual  # [1,2,3] = [2,2,3] -> Error
+
+first = 1
+actual = [1, 2, 3]
+[^first, 2, 3] = actual # Nothing happened
+```
+
+```exs
+pinned_value = 1
+
+case {:ok, 1} do
+  {:ok, ^pinned_value} -> "clause 1"
+  {:ok, generic_value} -> "clause 2"
+end === "clause 1" # With pinned it behaves like we want
+
+# Despite Being 2, Not 1, Clause 1 Is Triggered Because We Didn't Pin The Value.
+case {:ok, 2} do
+  {:ok, pinned_value} -> "clause 1"
+  {:ok, generic_value} -> "clause 2"
+end === "clause 1" # WRONG
 ```
