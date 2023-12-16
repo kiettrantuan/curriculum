@@ -116,6 +116,9 @@ Lists can be added or subtracted using `++` and `--`. This operation occurs from
 # [0, 1, 2] -- [0, 1] => [2]
 ([0, 1, 2] -- [0, 1]) -- [2]
 # => []
+
+["b", "a", "b", "c"] -- ["b", "c"]
+# -> ["a", "b"] # Very useful function
 ```
 
 #### Keyword Lists
@@ -1402,4 +1405,57 @@ else
   {:too_long, _} -> IO.puts("value is too long")
   {:too_short, _} -> IO.puts("value is too short")
 end
+```
+
+## Protocols
+
+`protocol` allows us to create a common functionality, with different implementations.
+
+Specifically, protocols enable polymorphic behavior based off of data.
+
+Define using `defprotocol` for head and `defimpl` for implementation and `for:` for struct or data type.
+
+```exs
+defprotocol Adder do
+  def add(value, value)
+end
+
+defimpl Adder, for: Integer do
+  def add(int1, int2) do
+    int1 + int2
+  end
+end
+
+Adder.add(1, 2)
+
+defimpl Adder, for: BitString do
+  def add(string1, string2) do
+    string1 <> string2
+  end
+end
+
+Adder.add("hello, ", "world")
+```
+
+For modules that have struct
+
+```exs
+defprotocol Sound do
+  def say(struct)
+end
+
+defmodule Cat do
+  defstruct [:mood]
+end
+
+defimpl Sound, for: Cat do
+  def say(cat) do
+    case cat.mood do
+      :happy -> "Purr"
+      :angry -> "Hiss!"
+    end
+  end
+end
+
+Sound.say(%Cat{mood: :happy})
 ```
