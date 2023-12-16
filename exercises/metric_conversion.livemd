@@ -83,9 +83,32 @@ end
 
 ```elixir
 defmodule Metric do
-  def convert(from, to) do
+  def convert({from_unit, value}, to_unit) when from_unit === to_unit, do: value
+
+  def convert({from_unit, value}, to_unit) do
+    units = [{:millimeter, 0.001}, {:centimeter, 0.01}, {:meter, 1.0}, {:kilometer, 1000.0}]
+
+    [from_meters, to_meters] =
+      Enum.reduce(units, [], fn {unit, in_meters}, acc ->
+        case unit do
+          ^from_unit -> [in_meters] ++ acc
+          ^to_unit -> acc ++ [in_meters]
+          _ -> acc
+        end
+      end)
+
+    value * from_meters / to_meters
   end
 end
+
+{
+  Metric.convert({:centimeter, 10.0}, :centimeter),
+  Metric.convert({:centimeter, 10.0}, :meter),
+  Metric.convert({:meter, 0.1}, :kilometer),
+  Metric.convert({:centimeter, 10.0}, :kilometer),
+  Metric.convert({:kilometer, 10.0}, :meter),
+  Metric.convert({:kilometer, 10.0}, :centimeter)
+}
 ```
 
 ## Commit Your Progress
