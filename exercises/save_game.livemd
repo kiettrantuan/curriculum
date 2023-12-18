@@ -7,6 +7,10 @@ Mix.install([
   {:youtube, github: "brooklinjazz/youtube"},
   {:hidden_cell, github: "brooklinjazz/hidden_cell"}
 ])
+
+File.cd!("Project/Elixir")
+File.mkdir("save_game")
+File.cd!("save_game")
 ```
 
 ## Navigation
@@ -76,14 +80,27 @@ defmodule Game do
   Save an elixir term into a given file name.
   """
   def save(data, filename) do
+    File.write("#{filename}.txt", :erlang.term_to_binary(data))
   end
 
   @doc """
   Retrieve an elixir term from a given file name.
   """
   def load(filename) do
+    {:ok, content} = File.read("#{filename}.txt")
+    :erlang.binary_to_term(content)
   end
 end
+```
+
+```elixir
+game_state = %{name: "Peter Parker", level: 10, location: "New York"}
+
+Game.save(game_state, "save_file1")
+```
+
+```elixir
+Game.load("save_file1")
 ```
 
 ## Commit Your Progress
