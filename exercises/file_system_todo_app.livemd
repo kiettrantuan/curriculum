@@ -7,6 +7,10 @@ Mix.install([
   {:youtube, github: "brooklinjazz/youtube"},
   {:hidden_cell, github: "brooklinjazz/hidden_cell"}
 ])
+
+File.cd!("Project/Elixir")
+File.mkdir("fs_todo")
+File.cd!("fs_todo")
 ```
 
 ## Navigation
@@ -79,6 +83,7 @@ defmodule TodoList do
       []
   """
   def list do
+    File.ls!()
   end
 
   @doc """
@@ -92,6 +97,7 @@ defmodule TodoList do
       ["task 2", "task 1"]
   """
   def add(item) do
+    File.write!(item, "")
   end
 
   @doc """
@@ -105,8 +111,23 @@ defmodule TodoList do
       ["task 2", "task 1"]
   """
   def complete(item) do
+    File.rm!(item)
   end
 end
+```
+
+```elixir
+TodoList.add("task 1")
+TodoList.add("task 2")
+
+TodoList.list()
+```
+
+```elixir
+TodoList.add("finish homework")
+TodoList.complete("finish homework")
+
+TodoList.list()
 ```
 
 ## Commit Your Progress
