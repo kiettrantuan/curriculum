@@ -1459,3 +1459,67 @@ end
 
 Sound.say(%Cat{mood: :happy})
 ```
+
+## Persistence Using The File System
+
+### Streams
+
+`Enum` requires each element in the enumeration to be stored in memory during execution. Each `Enum` function stores a copy of the the enumerable it creates and executes sequentially.
+
+In short, **chain Enums** waste memory. Instead, use Streams and Lazy evaluation can massively improve memory usage.
+
+```exs
+1..10
+|> Enum.map(fn each -> each * 2 end)
+|> Enum.filter(fn each -> each <= 10 end)
+|> Enum.take(4)
+```
+
+`Streams` are composable, lazy enumerables. **Lazy** means they execute on each element in the stream one by one. **Composable** means that we build up functions to execute on each element in the stream.
+
+The `Stream` will only evaluate when it's called with any eager function from the `Enum` module.
+
+```exs
+1..10
+|> Stream.map(fn each -> each * 2 end)
+|> Stream.filter(fn each -> each <= 10 end)
+|> Stream.take(4)
+|> Enum.to_list()
+```
+
+Streams will generally provide the greatest benefits when operations **reduce the number of elements** in the enumerable.
+
+Stream can be used as generator.
+
+- `iterate/2` to iterate over an accumulator. Each function return `next_accumulator`.
+- `unfold/2` separates the accumulator and the return value. So you can accumulate, and then generate a separate value from the accumulator. Each function return: `{value, next_accumulator}` to continue OR `nil` to end stream.
+
+```exs
+# [1,2,3,1,2,3,...] **Cycle** to infinity
+Stream.cycle([1, 2, 3])
+|> Enum.take(10) === [1, 2, 3, 1, 2, 3, 1, 2, 3, 1]
+
+# acc = 0 -> function <-> next acc
+Stream.iterate(0, fn accumulator -> accumulator + 1 end)
+|> Enum.take(5) === [0, 1, 2, 3, 4]
+
+# acc = 5 <-> function -> value
+Stream.unfold(5, fn accumulator ->
+  value = "value: #{accumulator}"
+  next_accumulator = accumulator + 1
+  {value, next_accumulator}
+end)
+|> Enum.take(5) === ["value: 5", "value: 6", "value: 7", "value: 8", "value: 9"]
+
+Stream.unfold(0, fn
+  10 ->
+    nil
+
+  accumulator ->
+    value = "value: #{accumulator}"
+    next_accumulator = accumulator + 1
+    {value, next_accumulator}
+end)
+|> Enum.to_list() === ["value: 0", "value: 1", "value: 2", "value: 3", "value: 4", "value: 5", "value: 6", "value: 7",
+ "value: 8", "value: 9"]
+```
