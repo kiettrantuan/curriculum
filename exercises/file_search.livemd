@@ -30,6 +30,12 @@ Mix.install([
 </div>
 </div>
 
+```elixir
+File.cd!("Project/Elixir/fs_test")
+File.mkdir("file_search")
+File.cd!("file_search")
+```
+
 ## Mastery
 
 Mastery assignments are bonus projects designed to incorporate curriculum concepts at an advanced level. You have complete freedom with how you complete mastery assignments, and may change requirements as you see fit. Each mastery assignment serves as an independent project you may choose to include on your portfolio of projects.
@@ -92,8 +98,33 @@ defmodule FileSearch do
   It would return:
 
   ["file1.txt", "file2.txt", "file3.txt", "file4.txt"]
+
+  ## Examples
+
+    iex> FileSearch.all("main")
+    [
+       "file0.1.txt",
+       "file_no_ext1",
+       "file_no_ext2",
+       "file1.1.txt",
+       "file1_no_ext",
+       "file2.1.txt",
+       "file2.2.tt",
+       "file2_no_ext",
+       "file3.1.txt",
+       "file3.2.tt",
+       "file3.3.t",
+       "file3_no_ext"
+    ]
   """
   def all(folder) do
+    Path.wildcard(Path.join(folder, "**/*"))
+    |> Enum.reduce([], fn curr, acc ->
+      cond do
+        File.dir?(curr) -> acc
+        Path.basename(curr) !== "" -> acc ++ [Path.basename(curr)]
+      end
+    end)
   end
 
   @doc """
@@ -122,10 +153,65 @@ defmodule FileSearch do
     ".png" => ["file1.png", "file2.png"],
     ".jpg" => ["file3.jpg"]
   }
+
+  ## Examples
+
+    iex> FileSearch.by_extension("main")
+    %{
+       "" => [
+         "file_no_ext1",
+         "file_no_ext2",
+         "file1_no_ext",
+         "file2_no_ext",
+         "file3_no_ext"
+       ],
+       ".t" => ["file3.3.t"],
+       ".tt" => ["file2.2.tt", "file3.2.tt"],
+       ".txt" => [
+         "file0.1.txt",
+         "file1.1.txt",
+         "file2.1.txt",
+         "file3.1.txt"
+       ]
+    }
   """
   def by_extension(folder) do
+    Path.wildcard(Path.join(folder, "**/*"))
+    |> Enum.reduce(%{}, fn curr, acc ->
+      bn = Path.basename(curr)
+
+      cond do
+        File.dir?(curr) ->
+          acc
+
+        bn !== "" ->
+          Map.update(acc, Path.extname(bn), [bn], fn prev -> prev ++ [bn] end)
+      end
+    end)
   end
 end
+```
+
+```elixir
+File.mkdir_p!("main/sub1")
+File.mkdir_p!("main/sub2")
+File.mkdir_p!("main/sub3")
+
+File.write("main/sub1/file1.1.txt", "")
+File.write("main/sub1/file1_no_ext", "")
+File.write!("main/sub2/file2.1.txt", "")
+File.write!("main/sub2/file2.2.tt", "")
+File.write!("main/sub2/file2_no_ext", "")
+File.write!("main/sub3/file3.1.txt", "")
+File.write!("main/sub3/file3.2.tt", "")
+File.write!("main/sub3/file3.3.t", "")
+File.write!("main/sub3/file3_no_ext", "")
+
+File.write!("main/file0.1.txt", "")
+File.write!("main/file_no_ext1", "")
+File.write!("main/file_no_ext2", "")
+File.mkdir_p!("main/sub_empty1")
+File.mkdir_p!("main/sub_empty2")
 ```
 
 ### Configure Project As A Script
