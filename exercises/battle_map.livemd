@@ -100,6 +100,11 @@ end
 
 ```elixir
 # Implementation Goes Here:
+defimpl Character, for: Barbarian do
+  def can_attack?(_, {x, y}, {x_a, y_a}) do
+    x - 3 < x_a and x_a < x + 3 and (y - 3 < y_a and y_a < y + 3)
+  end
+end
 
 # You May Use The Following Test Suite To Validate Your Solution.
 ExUnit.start(auto_run: false)
@@ -123,6 +128,8 @@ defmodule BarbarianTests do
 
     test "logic is not hardcoded to the {4, 4} position" do
       refute Character.can_attack?(%Barbarian{}, {3, 3}, {6, 6})
+      refute Character.can_attack?(%Barbarian{}, {3, 4}, {6, 6})
+      refute Character.can_attack?(%Barbarian{}, {4, 3}, {6, 6})
     end
   end
 end
@@ -163,6 +170,16 @@ Create a `Wizard` implementation for the `Character` protocol.
 
 ```elixir
 # Implementation Goes Here:
+defimpl Character, for: Wizard do
+  def can_attack?(_, {x, y}, {x_a, y_a}) do
+    cond do
+      x_a === x -> true
+      y_a === y -> true
+      abs(x_a - x) === abs(y_a - y) -> true
+      true -> false
+    end
+  end
+end
 
 # You May Use The Following Test Suite To Validate Your Solution.
 ExUnit.start(auto_run: false)
@@ -214,7 +231,54 @@ true
 Implement your custom character below.
 
 ```elixir
+defmodule Archer do
+  defstruct []
+end
 
+defimpl Character, for: Archer do
+  def can_attack?(_, {x, y}, {x_a, y_a}) do
+    cond do
+      abs(x_a - x) === 3 -> abs(y_a - y) < 4
+      abs(y_a - y) === 3 -> abs(x_a - x) < 4
+      true -> false
+    end
+  end
+end
+
+ExUnit.start(auto_run: false)
+
+defmodule ArcherTests do
+  use ExUnit.Case
+
+  describe "Archer" do
+    test "can attack" do
+      # up, up-right, right, down-right, down, down-left, left, up-left
+      for num <- 1..7 do
+        assert Character.can_attack?(%Archer{}, {4, 4}, {7, num})
+        assert Character.can_attack?(%Archer{}, {4, 4}, {num, 7})
+
+        assert Character.can_attack?(%Archer{}, {4, 4}, {1, num})
+        assert Character.can_attack?(%Archer{}, {4, 4}, {num, 1})
+      end
+    end
+
+    test "cannot attack invalid squares" do
+      for num <- 0..7 do
+        refute Character.can_attack?(%Archer{}, {4, 4}, {0, num})
+        refute Character.can_attack?(%Archer{}, {4, 4}, {num, 0})
+
+        refute Character.can_attack?(%Archer{}, {4, 4}, {8, num})
+        refute Character.can_attack?(%Archer{}, {4, 4}, {num, 8})
+      end
+
+      for x <- 2..6, y <- 2..6 do
+        refute Character.can_attack?(%Archer{}, {4, 4}, {x, y})
+      end
+    end
+  end
+end
+
+ExUnit.run()
 ```
 
 ## Commit Your Progress
