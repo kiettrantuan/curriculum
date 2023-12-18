@@ -1523,3 +1523,56 @@ end)
 |> Enum.to_list() === ["value: 0", "value: 1", "value: 2", "value: 3", "value: 4", "value: 5", "value: 6", "value: 7",
  "value: 8", "value: 9"]
 ```
+
+### File
+
+`File` module for working with the file system and the `Path` module for working with file paths.
+
+- [File.cd/1](https://hexdocs.pm/elixir/File.html#cd/1) change the current directory.
+- [File.dir?/2](https://hexdocs.pm/elixir/File.html#dir?/2) check if a given path is a directory.
+- [File.exists?/2](https://hexdocs.pm/elixir/File.html#exists?/2) check if a file exists.
+- [File.ls/1](https://hexdocs.pm/elixir/File.html#ls/1) list all files and folders in the current directory.
+- [File.read/1](https://hexdocs.pm/elixir/File.html#read/1) read content from a file.
+- [File.rm/1](https://hexdocs.pm/elixir/File.html#rm/1) remove a file.
+- [File.rm_rf/1](https://hexdocs.pm/elixir/File.html#rm_rf/1)remove files and directories in a given path.
+- [File.mkdir/1](https://hexdocs.pm/elixir/File.html#mkdir/1) create a directory given a path.
+- [File.mkdir_p/1](https://hexdocs.pm/elixir/File.html#mkdir_p/1) create a directory and any missing parent directories given a path.
+- [File.write/3](https://hexdocs.pm/elixir/File.html#write/3) write content to a given file path.
+
+- [Path.absname/1](https://hexdocs.pm/elixir/Path.html#absname/1) convert the given path into an absolute path.
+- [Path.dirname/1](https://hexdocs.pm/elixir/Path.html#dirname/1) return the directory portion of a given path.
+- [Path.join/2](https://hexdocs.pm/elixir/Path.html#join/2) join two paths. This is much more reliable than string concatenation.
+- [Path.split/1](https://hexdocs.pm/elixir/Path.html#split/1) split a path into a list on each directory separator `/`
+- [Path.wildcard/2](https://hexdocs.pm/elixir/Path.html#wildcard/2) return a list of files that match the provided expression.
+
+`File.open/2` and `File.close/1` to open a file and perform some operations, then close when finished.
+
+While the file is open, `IO.read/2` and `IO.write/2` to read and write to the file.
+
+- `IO.read/2` function can read a new line each time called.
+- `IO.write/2` writes over the entire content of the file. We need to open the file with the :write option to enable write permission.
+
+```exs
+File.write!("open_close.txt", content)
+
+{:ok, file} = File.open("open_close.txt")
+
+IO.read(file, :line) |> IO.inspect()
+IO.read(file, :line) |> IO.inspect()
+IO.read(file, :line) |> IO.inspect()
+IO.read(file, :line) |> IO.inspect()
+
+File.close(file)
+```
+
+```exs
+File.write!("open_close.txt", content)
+
+{:ok, file} = File.open("open_close.txt", [:write])
+
+IO.write(file, "written content")
+
+File.close(file)
+
+File.read("open_close.txt") |> IO.inspect(label: "Updated File")
+```

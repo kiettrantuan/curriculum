@@ -7,6 +7,9 @@ Mix.install([
   {:youtube, github: "brooklinjazz/youtube"},
   {:hidden_cell, github: "brooklinjazz/hidden_cell"}
 ])
+
+# cd to your test folder for safety. eg: not accidentally delete files.
+File.cd!("Project/Elixir")
 ```
 
 ## Navigation
@@ -139,7 +142,7 @@ File.ls()
 To clean up the file, uncomment the following code which should remove it.
 
 ```elixir
-# File.rm("file.txt")
+File.rm("file.txt")
 ```
 
 Now the file should no longer exist. Let's check with [File.exists?/2](https://hexdocs.pm/elixir/File.html#exists?/2).
@@ -157,7 +160,13 @@ DO NOT DELETE IMPORTANT FILES ON YOUR SYSTEM WHEN USING THE FILE MODULE
 </div>
 
 ```elixir
+# File.mkdir!("test_dir1/")
+# File.mkdir!("test_dir1/test_dir2/")
+# File.mkdir!("test_dir1/test_dir2/test_dir3/")
 
+# File.write("test_dir1/test_dir2/test_dir3/file.txt", "file content")
+
+File.read!("test_dir1/test_dir2/test_dir3/file.txt")
 ```
 
 ## Path Module Functions
@@ -197,7 +206,15 @@ Path.join(path1, path2)
 Experiment with the functions above. Refer to the documentation for examples you can try.
 
 ```elixir
+path1 = "test_dir1"
+path2 = "test_dir2"
+path3 = "test_dir3/file.txt"
 
+file_path = Path.join([path1, path2, path3])
+
+IO.puts(file_path)
+
+File.read!(file_path)
 ```
 
 ## Bang Functions
@@ -270,9 +287,15 @@ Now we can write an Elixir term in it's binary format, then read the file.
 ```elixir
 :ok = File.write("binary.txt", :erlang.term_to_binary([1, 2]))
 
+IO.inspect(:erlang.term_to_binary([1, 2]))
+
 {:ok, binary} = File.read("binary.txt")
 
+IO.inspect(binary)
+
 [1, 2] = :erlang.binary_to_term(binary)
+
+IO.inspect(:erlang.binary_to_term(binary))
 
 # Cleaning Up The File To Avoid Saving A File On Your Computer.
 File.rm("binary.txt")
