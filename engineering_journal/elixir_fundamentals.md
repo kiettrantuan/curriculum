@@ -1576,3 +1576,94 @@ File.close(file)
 
 File.read("open_close.txt") |> IO.inspect(label: "Updated File")
 ```
+
+## Processes
+
+All Elixir code runs inside of a process.
+
+- Processes are **isolated** from each other and communicate via message passing. (A process crashes won't affect others)
+- Processes can store state and allow us to have in-memory persistence.
+
+- `send/2` and `receive/1` messages between processes by using **pid** (process id).
+- `self/0` return current pid.
+- `spawn/1` create a new child process and return its pid.
+- `spawn_link/1` create new process that link to current process (link process crashes will lead to current process crashes).
+- `Process.link/1` link current process with another process by **pid** argument.
+
+```exs
+send(self(), {:hello, "world"})
+
+receive do
+  {:hello, payload} -> payload
+end === "world"
+```
+
+Spawn's process end when its callback function end.
+
+```exs
+pid = spawn(fn -> IO.puts("I was called") end)
+
+Process.alive?(pid) && IO.puts("I am alive!")
+
+Process.sleep(100)
+
+Process.alive?(pid) === false && IO.puts("I am dead :(")
+
+# I am alive!
+# I was called
+# I am dead!
+
+# -> Print: alive -> called -> dead
+```
+
+### State
+
+This process will die after receive a message.
+
+```exs
+pid1 = spawn(fn ->
+  receive do
+    {:hello, what} -> IO.puts(what)
+  end
+end)
+
+send(pid1, {:hello, "world"})
+```
+
+This process stay alive as it loop itself.
+
+```exs
+defmodule ServerProcess do
+  def loop do
+    IO.puts("called #{Enum.random(1..10)}")
+
+    receive do
+      "message" -> loop()
+    end
+  end
+end
+
+server_process = spawn(fn -> ServerProcess.loop() end)
+
+send(server_process, "message")
+```
+
+Then, we can store state as below.
+
+```exs
+defmodule Counter do
+  def loop(state \\ 0) do
+    IO.inspect(state, label: "counter")
+
+    receive do
+      :increment -> loop(state + 1)
+      :decrement -> loop(state - 1)
+    end
+  end
+end
+
+counter_process = spawn(fn -> Counter.loop() end)
+
+send(counter_process, :increment)
+send(counter_process, :decrement)
+```

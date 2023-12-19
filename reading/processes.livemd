@@ -151,9 +151,11 @@ after it is called.
 ```elixir
 pid = spawn(fn -> IO.puts("I was called") end)
 
+Process.alive?(pid) && IO.puts("I am alive!")
+
 Process.sleep(100)
 
-Process.alive?(pid) || IO.puts("I am dead :(")
+Process.alive?(pid) === false && IO.puts("I am dead :(")
 ```
 
 Processes are isolated from each other. That means that when a child process raises an error, it will not crash the parent process. Instead, it will only log an error.
@@ -224,7 +226,8 @@ Spawn a linked process and crash this Elixir cell below.
 Comment out your solution when complete to avoid continuously crashing the livebook!
 
 ```elixir
-
+# pid1 = spawn_link(fn -> raise "oops" end)
+# "I will not run, because the above crashes"
 ```
 
 ## Message Passing
@@ -270,7 +273,14 @@ In the Elixir cell below, spawn a new process and send it a message `{:hello, "w
 `IO.puts` the message's payload where `"world"` is the payload.
 
 ```elixir
+pid1 =
+  spawn(fn ->
+    receive do
+      {:hello, what} -> IO.puts(what)
+    end
+  end)
 
+send(pid1, {:hello, "world"})
 ```
 
 ## State
@@ -375,6 +385,7 @@ defmodule Counter do
 
     receive do
       :increment -> loop(state + 1)
+      :decrement -> loop(state - 1)
     end
   end
 end
@@ -385,7 +396,8 @@ counter_process = spawn(fn -> Counter.loop() end)
 You should be able to send a `:decrement` message to a spawned `Counter`. Uncomment and evaluate the code below to test your solution.
 
 ```elixir
-# send(counter_process, :decrement)
+send(counter_process, :increment)
+send(counter_process, :decrement)
 ```
 
 ## Commit Your Progress
