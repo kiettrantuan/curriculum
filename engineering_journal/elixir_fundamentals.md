@@ -1589,6 +1589,9 @@ All Elixir code runs inside of a process.
 - `spawn/1` create a new child process and return its pid.
 - `spawn_link/1` create new process that link to current process (link process crashes will lead to current process crashes).
 - `Process.link/1` link current process with another process by **pid** argument.
+- `Process.sleep/1` sleep for milliseconds.
+- `Process.send_after/3` send message after milliseconds.
+- `Process.exit/2` with option `:normal` or `:kill`.
 
 ```exs
 send(self(), {:hello, "world"})
