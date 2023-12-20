@@ -1670,3 +1670,195 @@ counter_process = spawn(fn -> Counter.loop() end)
 send(counter_process, :increment)
 send(counter_process, :decrement)
 ```
+
+## GenServers
+
+A module from OTP (Open Telecom Platform) library. Stand for **Generic Server**, refers to a programming pattern and behavior.
+
+Generic Server provides a structured approach to building concurrent and fault-tolerant systems by encapsulating state, managing message-based communication, and defining behavior through callback functions.
+
+1. **State Management**: The [GenServer](https://hexdocs.pm/elixir/GenServer.html) process holds and manages its own internal state. This state can be modified by handling specific messages and updating the state accordingly.
+2. **Message Handling**: [GenServer](https://hexdocs.pm/elixir/GenServer.html) processes receive messages asynchronously and handle them using pattern matching on the message content. The behavior of the server can be defined based on the message received.
+3. **Synchronous and Asynchronous Communication**: [GenServer](https://hexdocs.pm/elixir/GenServer.html) processes can communicate synchronously by sending a message and waiting for a response, or asynchronously by sending a message without expecting an immediate reply.
+4. **Supervision and Fault Tolerance**: [GenServer](https://hexdocs.pm/elixir/GenServer.html) processes are often used within supervision trees, allowing them to be monitored and restarted in the event of failures or crashes. This contributes to the fault-tolerant nature of OTP applications.
+5. **Callback Functions**: [GenServer](https://hexdocs.pm/elixir/GenServer.html) requires implementing specific callback functions such as [handle_call/3](https://hexdocs.pm/elixir/GenServer.html#c:handle_call/3), [handle_cast/2](https://hexdocs.pm/elixir/GenServer.html#c:handle_cast/2), and [handle_info/2](https://hexdocs.pm/elixir/GenServer.html#c:handle_info/2) to define the behavior of the server for different types of messages.
+
+### Message Handler Callbacks
+
+The [GenServer](https://hexdocs.pm/elixir/GenServer.html) module defines all of the boilerplate under the hood, and allows us to conveniently provide callback functions
+ including:
+
+- [init/1](https://hexdocs.pm/elixir/GenServer.html#c:init/1) defines the initial state in an `{:ok, state}` tuple.
+- [handle_call/3](https://hexdocs.pm/elixir/GenServer.html#c:handle_call/3) handle a synchronous message meant for a GenServer process.
+- [handle_cast/2](https://hexdocs.pm/elixir/GenServer.html#c:handle_cast/2) handle an asynchronous message meant for a GenServer process.
+- [handle_info/2](https://hexdocs.pm/elixir/GenServer.html#c:handle_info/2) handle a generic asynchronous message.
+
+- `GenServer.handle_cast/2`
+  - Non-blocking message handling.
+  - Typically only used to update GenServer state.
+- `GenServer.handle_info/2`
+  - Non-blocking message handling
+  - Used for a wider variety of messages such as system level behavior, or handling messages that are sent to many different types of processes.
+  - Can receive messages sent after an amount of time with `Process.send_after/4`.
+
+### Starting A GenServer
+
+We commonly use one of the following functions to start a GenServer process.
+
+- [GenServer.start_link/3](https://hexdocs.pm/elixir/GenServer.html#start_link/3) start a GenServer as a linked process.
+- [GenServer.start/3](https://hexdocs.pm/elixir/GenServer.html#start/3) start a GenServer without linking the process.
+
+### Sending A GenServer A Message
+
+We can send the [GenServer](https://hexdocs.pm/elixir/GenServer.html) messages with functions such as:
+
+- [GenServer.call/3](https://hexdocs.pm/elixir/GenServer.html#call/3) send a synchronous message for a GenServer handled by `handle_call/3`.
+- [GenServer.cast/2](https://hexdocs.pm/elixir/GenServer.html#cast/2) send an asynchronous message for a GenServer handled by `handle_cast/2`.
+- [Kernel.send/2](https://hexdocs.pm/elixir/Kernel.html#send/2) send a generic asynchronous message handled by `handle_info/2`
+- [Process.send/3](https://hexdocs.pm/elixir/Process.html#send/3) send a generic asynchronous message with some additional options handled by `handle_info/2`.
+- [Process.send_after/4](https://hexdocs.pm/elixir/Process.html#send_after/4) send a generic asynchronous message handled by `handle_info/2`.
+
+```exs
+defmodule CounterServer do
+  use GenServer
+
+  # initializes the initial state = 0
+  @impl true
+  def init(_init_arg) do
+    {:ok, 0}
+  end
+
+  # asynchronously updates the state
+  @impl true
+  def handle_cast(:increment, state) do
+    {:noreply, state + 1}
+  end
+
+  # returns a synchronous response
+  @impl true
+  def handle_call(:get_count, _from, state) do
+    # `response` bound for sake of clarity.
+    response = state
+    {:reply, response, state}
+  end
+end
+
+# Call
+
+{:ok, pid} = GenServer.start_link(CounterServer, [])
+first = GenServer.call(pid, :get_count)
+
+GenServer.cast(pid, :increment)
+second = GenServer.call(pid, :get_count)
+
+GenServer.cast(pid, :increment)
+third = GenServer.call(pid, :get_count)
+
+{first, second, third} === {0, 1, 2}
+```
+
+### Client API
+
+Client API makes our code more reusable, readable, and easy to change. This is purely for code organization.
+
+Callback functions are often referred to as the **Server API**.
+
+Client API functions typically use `__MODULE__` when referencing the current module to make it easier to rename the module in the future.
+
+```exs
+defmodule ClientServerExample do
+  use GenServer
+  # Client API
+
+  def start_link(_opts) do
+    GenServer.start_link(__MODULE__, [])
+  end
+
+  def increment(pid) do
+    GenServer.cast(pid, :increment)
+  end
+
+  def get_count(pid) do
+    GenServer.call(pid, :get_count)
+  end
+
+  # Server API
+
+  def init(_init_arg) do
+    {:ok, 0}
+  end
+
+  def handle_cast(:increment, state) do
+    {:noreply, state + 1}
+  end
+
+  def handle_call(:get_count, _from, state) do
+    response = state
+    {:reply, response, state}
+  end
+end
+```
+
+Separated Client and Server modules can not use `__MODULE__` to reference.
+
+```exs
+defmodule ClientExample do
+  def start_link(_opts) do
+    GenServer.start_link(ServerExample, [])
+  end
+
+  def increment(pid) do
+    GenServer.cast(pid, :increment)
+  end
+
+  def get_count(pid) do
+    GenServer.call(pid, :get_count)
+  end
+end
+
+defmodule ServerExample do
+  use GenServer
+
+  def init(_init_arg) do
+    {:ok, 0}
+  end
+
+  def handle_cast(:increment, state) do
+    {:noreply, state + 1}
+  end
+
+  def handle_call(:get_count, _from, state) do
+    response = state
+    {:reply, response, state}
+  end
+end
+```
+
+### Named Processes
+
+`GenServer.start_link/3` takes additional options as the third argument. We can provide a `:name` option to name the process. Names are typically atoms or module names (which are just atoms under the hood.)
+
+Named processes are unique, there cannot be two processes with the same name. Named processes are also easy to reference as you can use the name of the process to send them a message.
+
+```exs
+defmodule NamedCounter do
+  def start_link(_opts) do
+    GenServer.start_link(NamedCounter, [], name: NamedCounter)
+  end
+
+  def init(_init_arg) do
+    {:ok, 0}
+  end
+
+  def handle_cast(:increment, state) do
+    {:noreply, state + 1}
+  end
+end
+
+# cast accept both process name and pid.
+GenServer.cast(NamedCounter, :increment)
+
+# Return pid of process name.
+# Can be used to get pid for functions accept only pid.
+Process.whereis(NamedCounter)
+```

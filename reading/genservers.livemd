@@ -140,6 +140,11 @@ defmodule CounterServer do
   end
 
   @impl true
+  def handle_cast(:decrement, state) do
+    {:noreply, state - 1}
+  end
+
+  @impl true
   def handle_call(:get_count, _from, state) do
     # `response` bound for sake of clarity.
     response = state
@@ -152,8 +157,12 @@ Using the GenServer above, here's an example of sending an asynchronous message 
 
 ```elixir
 {:ok, pid} = GenServer.start_link(CounterServer, [])
+first = GenServer.call(pid, :get_count)
 GenServer.cast(pid, :increment)
-GenServer.call(pid, :get_count)
+second = GenServer.call(pid, :get_count)
+GenServer.cast(pid, :increment)
+third = GenServer.call(pid, :get_count)
+{first, second, third} === {0, 1, 2}
 ```
 
 In Livebook, we can use [Kino.Process.render_seq_trace/2](https://hexdocs.pm/kino/Kino.Process.html#render_seq_trace/2) to visualize the **CAST** and **CALL** messages sent to the GenServer.
@@ -187,6 +196,16 @@ end
 ### Your Turn
 
 In the `CounterServer` above, add a handler for a `:decrement` message.
+
+```elixir
+{:ok, pid} = GenServer.start_link(CounterServer, [])
+first = GenServer.call(pid, :get_count)
+GenServer.cast(pid, :increment)
+second = GenServer.call(pid, :get_count)
+GenServer.cast(pid, :decrement)
+third = GenServer.call(pid, :get_count)
+{first, second, third} === {0, 1, 0}
+```
 
 ## Client API
 
