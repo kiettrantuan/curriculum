@@ -2024,3 +2024,105 @@ end
 
 ExUnit.run()
 ```
+
+## Supervisors
+
+`Supervisors` monitor processes and *restart* them when they die. *restart* mean kill the process and start a new one in its place.
+
+Every supervisor is also a process. The `Supervisor.start_link/2` function accepts a list of child processes and starts the supervisor process. We provide each child as a map with an `:id` and a `:start` signature.
+
+```exs
+defmodule Worker do
+  use GenServer
+
+  def start_link(_opts) do
+    GenServer.start_link(__MODULE__, [], [])
+  end
+
+  def init(state) do
+    {:ok, state}
+  end
+end
+
+children = [
+  %{
+    id: :worker1,
+    start: {Worker, :start_link, [1]}
+  },
+  %{
+    id: :worker2,
+    start: {Worker, :start_link, [2]}
+  },
+  %{
+    id: :worker3,
+    start: {Worker, :start_link, [3]}
+  }
+]
+
+{:ok, supervisor_pid} = Supervisor.start_link(children, strategy: :one_for_one)
+```
+
+### Restart Strategies
+
+- `:one_for_one` restart only crashed worker.
+- `:one_for_all` restart all workers if any of them crashed.
+- `:rest_for_one` restart workers in order after the crashed process.
+
+### Syntax Sugar
+
+Instead of a map with `:id` and `:start` keys, use tuple:
+
+- First value is the name of the module as `:id`.
+- Second value is the argument passed to `start_link/1`.
+
+```exs
+children = [
+  {Bomb, [name: "Syntax Sugar Bomb", bomb_time: 1000]}
+]
+```
+
+### Supervised Mix Projects
+
+Command to generate a supervised mix project.
+
+```sh
+mix new my_app --sup
+```
+
+OR we can manually add these configuration, file for supervised.
+
+- `my_app/application.ex` use an `Application` module that defines application callbacks.
+
+```exs
+defmodule MyApp.Application do
+  # See https://hexdocs.pm/elixir/Application.html
+  # for more information on OTP Applications
+  @moduledoc false
+
+  use Application
+
+  @impl true
+  def start(_type, _args) do
+    children = [
+      # Starts a worker by calling: RockPaperScissors.Worker.start_link(arg)
+      # {RockPaperScissors.Worker, arg}
+    ]
+
+    # See https://hexdocs.pm/elixir/Supervisor.html
+    # for other strategies and supported options
+    opts = [strategy: :one_for_one, name: MyApp.Supervisor]
+    Supervisor.start_link(children, opts)
+  end
+end
+```
+
+- Add module to `mix.exs`.
+
+```exs
+def application do
+  [
+    extra_applications: [:logger],
+    mod: {MyApp.Application, []}
+  ]
+end
+```
