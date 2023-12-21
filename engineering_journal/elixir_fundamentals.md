@@ -1862,3 +1862,150 @@ GenServer.cast(NamedCounter, :increment)
 # Can be used to get pid for functions accept only pid.
 Process.whereis(NamedCounter)
 ```
+
+### GenServers Sending Themselves A Message
+
+A GenServer cannot synchronously send itself a message using `call/3` because the current message blocks the process mailbox.
+
+```exs
+defmodule SendingSelfExample do
+  use GenServer
+
+  def init(_init_arg) do
+    {:ok, nil}
+  end
+
+  def handle_call(:talking_to_myself, _from, state) do
+    Process.sleep(1000)
+    IO.puts("Talking to myself")
+    GenServer.call(self(), :talking_to_myself)
+    {:reply, "response", state}
+  end
+
+  def handle_cast(:talking_to_myself, state) do
+    Process.sleep(1000)
+    IO.puts("Talking to myself")
+    GenServer.cast(self(), :talking_to_myself)
+    {:noreply, state}
+  end
+end
+
+{:ok, pid} = GenServer.start(SendingSelfExample, [])
+GenServer.call(pid, :talking_to_myself)
+```
+
+Instead of `cast/2` + `handle_cast/2` or `call/3` + `handle_call/3`, use `send_after/3` with `handle_info/2` to send self a message.
+
+```exs
+defmodule Timer do
+  @moduledoc """
+  iex> {:ok, pid} = Timer.start_link([])
+  iex> Timer.get_time(pid)
+  0
+  iex> Process.sleep(1200)
+  iex> Timer.get_time(pid)
+  1
+  """
+  use GenServer
+
+  def start_link(_opts) do
+    GenServer.start_link(__MODULE__, 0)
+  end
+
+  def get_time(timer_pid) do
+    GenServer.call(timer_pid, :get_time)
+  end
+
+  def init(_) do
+    inc()
+    {:ok, 0}
+  end
+
+  def inc() do
+    Process.send_after(self(), :inc, 1000)
+  end
+
+  def handle_info(:inc, state) do
+    {:noreply, state + 1}
+  end
+
+  def handle_call(:get_time, _from, state) do
+    {:reply, state, state}
+  end
+end
+```
+
+### Testing GenServers
+
+To test something **Stateful** like a process.
+
+```exs
+defmodule CounterServer do
+  use GenServer
+
+  @impl true
+  def init(state) do
+    {:ok, state}
+  end
+
+  @impl true
+  def handle_call(:increment, _from, state) do
+    {:reply, state + 1, state + 1}
+  end
+
+  @impl true
+  def handle_call(:get_count, _from, state) do
+    {:reply, state, state}
+  end
+end
+
+defmodule CounterClient do
+  def start_link(_opts) do
+    GenServer.start_link(CounterServer, 0)
+  end
+
+  def increment(pid) do
+    GenServer.call(pid, :increment)
+  end
+
+  def get_count(pid) do
+    GenServer.call(pid, :get_count)
+  end
+end
+```
+
+Generally, we **don't want to test** the implementation like below. Cause if any of the internals change, these tests could break, even though the behavior of the counter module doesn't.
+
+```exs
+ExUnit.start(auto_run: false)
+
+defmodule CounterServerTest do
+  use ExUnit.Case
+
+  test "Counter receives :increment call" do
+    {:ok, pid} = GenServer.start_link(CounterServer, 0)
+    GenServer.call(pid, :increment)
+    assert :sys.get_state(pid) == 1
+  end
+end
+
+ExUnit.run()
+```
+
+Instead, we generally **want to test** on the client interface of the GenServer like below.
+
+```exs
+ExUnit.start(auto_run: false)
+
+defmodule CounterClientTest do
+  use ExUnit.Case
+
+  test "increment/1" do
+    {:ok, pid} = CounterClient.start_link([])
+    CounterClient.increment(pid)
+    assert CounterClient.get_count(pid) == 1
+  end
+end
+
+ExUnit.run()
+```
