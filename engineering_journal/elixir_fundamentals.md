@@ -804,6 +804,21 @@ List.zip([letters, numbers]) === [{"a", 1}, {"b", 2}, {"c", 3}]
 - `Keyword.keys/1` list the keys in a keyword list.
 - `Keyword.keyword?/1` check if some data is a keyword list.
 
+```exs
+defmodule ConfigurableServer do
+  def start_link(opts) do
+    name = Keyword.get(opts, :name)
+    initial_state = Keyword.get(opts, :state, 0)
+
+    GenServer.start_link(__MODULE__, initial_state, name: name)
+  end
+
+  def init(init_arg) do
+    {:ok, init_arg}
+  end
+end
+```
+
 ## Comprehensions And Non-Enumerable Data Types
 
 ### Non-Enumerables
