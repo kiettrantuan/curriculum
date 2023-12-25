@@ -2165,3 +2165,28 @@ computation2 = fn -> Process.sleep(1000) end
 # Expected To Be ~1 Second
 microseconds / 1000 / 1000
 ```
+
+### Task Supervisor
+
+- `Task.Supervisor.start_child/2` start a fire-and-forget task.
+- `Task.Supervisor.async/2` + `Task.await/2` execute tasks concurrently and retrieve its result. If the task fails, the caller will also fail.
+- `Task.Supervisor.async_nolink/2` + `Task.yield/2` + `Task.shutdown/2` execute tasks concurrently and retrieve their results or the reason they failed within a given time frame. If the task fails, the caller won't fail. You will receive the error reason either on yield or shutdown.
+
+```exs
+children = [
+  {Task.Supervisor, name: MyTaskSupervisor}
+]
+
+{:ok, supervisor_pid} =
+  Supervisor.start_link(children, strategy: :one_for_one, name: :parent_supervisor)
+
+task =
+  Task.Supervisor.async(MyTaskSupervisor, fn ->
+    IO.puts("Task Started")
+    Process.sleep(1000)
+    IO.puts("Task Finished")
+    "response!"
+  end)
+
+Task.await(task)
+```
