@@ -52,7 +52,7 @@ Task.await(task)
 </details>
 
 ```elixir
-
+Task.await(Task.async(fn -> Process.sleep(1000) end))
 ```
 
 Use [Task.async/1](https://hexdocs.pm/elixir/Task.html#async/1) and [Task.await/2](https://hexdocs.pm/elixir/Task.html#await/2) to spawn a task process that sleeps for six seconds. It should cause a timeout error.
@@ -69,7 +69,7 @@ Task.await(task)
 </details>
 
 ```elixir
-
+Task.await(Task.async(fn -> Process.sleep(6000) end))
 ```
 
 Use [Task.async/1](https://hexdocs.pm/elixir/Task.html#async/1) and [Task.await/2](https://hexdocs.pm/elixir/Task.html#await/2) to spawn a task process that sleeps for six seconds. Provide a timeout value to [Task.await/2](https://hexdocs.pm/elixir/Task.html#await/2) so that it properly awaits the response.
@@ -86,7 +86,7 @@ Task.await(task, 7000)
 </details>
 
 ```elixir
-
+Task.await(Task.async(fn -> Process.sleep(6000) end), 7000)
 ```
 
 ## Task.yield/2
@@ -105,7 +105,12 @@ Task.yield(task)
 </details>
 
 ```elixir
-
+Task.yield(
+  Task.async(fn ->
+    Process.sleep(1000)
+    "res"
+  end)
+)
 ```
 
 Use [Task.async/1](https://hexdocs.pm/elixir/Task.html#async/1) and [Task.yield/2](https://hexdocs.pm/elixir/Task.html#yield/2) to spawn a task process that sleeps for six seconds and returns any response. Notice that the yield is `nil`.
@@ -122,7 +127,12 @@ Task.yield(task)
 </details>
 
 ```elixir
-
+Task.yield(
+  Task.async(fn ->
+    Process.sleep(6000)
+    "res"
+  end)
+)
 ```
 
 Use [Task.async/1](https://hexdocs.pm/elixir/Task.html#async/1) and [Task.yield/2](https://hexdocs.pm/elixir/Task.html#yield/2) to spawn a task process that sleeps for six seconds and returns any response. Provide a timeout value to [Task.yield/2](https://hexdocs.pm/elixir/Task.html#yield/2) so that it properly returns the response.
@@ -139,7 +149,13 @@ Task.yield(task, 7000)
 </details>
 
 ```elixir
-
+Task.yield(
+  Task.async(fn ->
+    Process.sleep(6000)
+    "res"
+  end),
+  7000
+)
 ```
 
 Use [Task.async/1](https://hexdocs.pm/elixir/Task.html#async/1), [Task.yield/2](https://hexdocs.pm/elixir/Task.html#yield/2), and [Task.shutdown/2](https://hexdocs.pm/elixir/Task.html#shutdown/2) to spawn a task process that sleeps for six seconds. Shutdown the task process if it does not yield any value after five seconds.
@@ -164,7 +180,13 @@ end
 </details>
 
 ```elixir
+tsk =
+  Task.async(fn ->
+    Process.sleep(6000)
+    IO.puts("res")
+  end)
 
+!Task.yield(tsk) && Task.shutdown(tsk)
 ```
 
 ## Task.await_many/2
@@ -184,7 +206,8 @@ Task.await_many([task1, task2])
 </details>
 
 ```elixir
-
+tsks = Enum.map(1..2, fn _ -> Task.async(fn -> Enum.random(1..10) end) end)
+Task.await_many(tsks)
 ```
 
 Use [Enum.map/2](https://hexdocs.pm/elixir/Enum.html#map/2), [Task.async/1](https://hexdocs.pm/elixir/Task.html#async/1), and [Task.await_many/2](https://hexdocs.pm/elixir/Task.html#await_many/2) to spawn one hundred task processes that all return a random integer from `1..100`.
@@ -201,7 +224,8 @@ Task.await_many(tasks)
 </details>
 
 ```elixir
-
+tsks = Enum.map(1..100, fn _ -> Task.async(fn -> Enum.random(1..100) end) end)
+Task.await_many(tsks)
 ```
 
 Use [Enum.map/2](https://hexdocs.pm/elixir/Enum.html#map/2), [Task.async/1](https://hexdocs.pm/elixir/Task.html#async/1), [String.upcase/2](https://hexdocs.pm/elixir/String.html#upcase/2), and [Task.await_many/2](https://hexdocs.pm/elixir/Task.html#await_many/2) to concurrently capitalize every string in the list `["apple", "pear", "peaches"]`
@@ -220,7 +244,10 @@ Task.await_many(tasks)
 </details>
 
 ```elixir
+tsks =
+  Enum.map(["apple", "pear", "peaches"], fn str -> Task.async(fn -> String.upcase(str) end) end)
 
+Task.await_many(tsks)
 ```
 
 ## Task.Supervisor
@@ -241,7 +268,9 @@ Supervisor.start_link(children, strategy: :one_for_one)
 </details>
 
 ```elixir
+child = [{Task.Supervisor, name: MyTaskSupervisor}]
 
+{:ok, s_pid} = Supervisor.start_link(child, strategy: :one_for_one)
 ```
 
 Use `Task.Supervisor.async/3` and [Task.await/2](https://hexdocs.pm/elixir/Task.html#await/2) to start a supervised task process that returns a random number after sleeping for two seconds.
@@ -261,7 +290,11 @@ Task.await(task)
 </details>
 
 ```elixir
-
+Task.Supervisor.async(MyTaskSupervisor, fn ->
+  Process.sleep(2000)
+  Enum.random(1..100)
+end)
+|> Task.await()
 ```
 
 Use [Enum.map/2](https://hexdocs.pm/elixir/Enum.html#map/2), `Task.Supervisor.async/3` and [Task.await_many/2](https://hexdocs.pm/elixir/Task.html#await_many/2) to start one hundred supervised task processes that returns a random number.
@@ -280,7 +313,13 @@ Task.await_many(tasks)
 </details>
 
 ```elixir
-
+Enum.map(1..100, fn _ ->
+  Task.Supervisor.async(MyTaskSupervisor, fn ->
+    Process.sleep(2000)
+    Enum.random(1..100)
+  end)
+end)
+|> Task.await_many()
 ```
 
 Use `Task.Supervisor.start_child/3` to start a `:temporary` task that crashes after five seconds. `:temporary` is already the default `:restart` option.
@@ -304,7 +343,18 @@ Supervisor.which_children(MyTaskSupervisor)
 </details>
 
 ```elixir
+Task.Supervisor.start_child(
+  MyTaskSupervisor,
+  fn ->
+    Process.sleep(5000)
+    raise "CRASH"
+  end,
+  restart: :temporary
+)
 
+Supervisor.which_children(MyTaskSupervisor) |> IO.inspect(label: ~c"Before")
+Process.sleep(6000)
+Supervisor.which_children(MyTaskSupervisor) |> IO.inspect(label: ~c"After")
 ```
 
 Use `Task.Supervisor.start_child/3` with the `restart: :transient` option to start a `:transient` task that crashes after one second.
@@ -330,7 +380,15 @@ task =
 </details>
 
 ```elixir
-
+Task.Supervisor.start_child(
+  MyTaskSupervisor,
+  fn ->
+    IO.inspect(self(), label: "Process restarted")
+    Process.sleep(1000)
+    raise "1 second CRASH"
+  end,
+  restart: :transient
+)
 ```
 
 ## Commit Your Progress
