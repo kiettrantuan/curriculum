@@ -1,0 +1,7 @@
+.btn-hover {
+    border-width: 1px;
+    border-color: orange;
+    &:hover {
+        background-color: orange;
+    }
+}
