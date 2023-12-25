@@ -2126,3 +2126,42 @@ def application do
   ]
 end
 ```
+
+## Task
+
+A module allows us to spawn a process, perform some work in that process, then end the process when our work is finished.
+
+Task is also OTP-compliant, meaning it conform to certain OTP conventions that improve error handling, and allow them to start under a supervisor.
+
+- `Task.start/1` like Kernel `spawn/1`, it's fire-and-forget.
+- `async/1` create an async process (Task struct) and `await/1` to run + await that process.
+- `await_many/1` await a list of async task.
+- `await/2` and `await_many/2` accept a timeout value as the second argument (default to 5000 milliseconds).
+
+```exs
+task =
+  Task.async(fn ->
+    # simulating expensive calculation
+    Process.sleep(1000)
+    "response!"
+  end)
+
+Task.await(task)
+```
+
+```exs
+computation1 = fn -> Process.sleep(1000) end
+computation2 = fn -> Process.sleep(1000) end
+
+{microseconds, _result} =
+  :timer.tc(fn ->
+    task1 = Task.async(fn -> computation1.() end)
+    task2 = Task.async(fn -> computation2.() end)
+
+    Task.await(task1)
+    Task.await(task2)
+  end)
+
+# Expected To Be ~1 Second
+microseconds / 1000 / 1000
+```
