@@ -2190,3 +2190,81 @@ task =
 
 Task.await(task)
 ```
+
+## APIs
+
+cURL options:
+
+- -X: Specifies the HTTP method to be used, such as GET, POST, PUT, or DELETE.
+- -H: Specifies an HTTP header to include in the request, such as Content-Type or Authorization.
+- -d: Specifies data to include in the request body, such as form data or JSON data.
+
+```sh
+curl -X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer BEARER_TOKEN"\
+-d '{"username":"xx","password":"xx"}' https://www.example.com/login
+```
+
+### Finch
+
+Popular HTTP client module.
+
+- Build finch request: `Finch.build(method, url, headers \\ [], body \\ nil, opts \\ [])`.
+
+```exs
+# start a finch process
+Finch.start_link(name: MyApp.Finch)
+
+# build request
+request = Finch.build(:get, "https://www.example.com")
+
+# send request, return response
+Finch.request!(request, MyApp.Finch)
+```
+
+Module named `JASON` to encode/decode string/map to map/string.
+
+```exs
+Jason.decode!("{\"key1\":\"value1\",\"key2\":\"value2\"}") === %{"key1" => "value1", "key2" => "value2"}
+
+Jason.encode!(%{"key1" => "value1", "key2" => "value2"}) === "{\"key1\":\"value1\",\"key2\":\"value2\"}"
+```
+
+From this cURL:
+
+```sh
+curl https://api.openai.com/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_TOKEN" \
+  -d '{
+    "prompt": "a white siamese cat",
+    "n": 1,
+    "size": "1024x1024"
+  }'
+```
+
+To finch request:
+
+```exs
+method = :post
+
+url = "https://api.openai.com/v1/images/generations"
+
+# Replace The $OPEN_API_TOKEN With Your Token.
+# Make Sure To Revoke The Token Later To Avoid Publicly Exposing It.
+
+headers = [
+  {"Content-Type", "application/json"},
+  {"Authorization", "Bearer $OPENAI_API_TOKEN"}
+]
+
+body =
+  Jason.encode!(%{
+    prompt: "a white siamese cat",
+    n: 1,
+    size: "1024x1024"
+  })
+
+Finch.build(method, url, headers, body)
+```

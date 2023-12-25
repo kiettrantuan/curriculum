@@ -329,7 +329,7 @@ decoded_body = Jason.decode!(response.body)
 Now we can work with the decoded body like any Elixir map. For example we can access the "joke" field.
 
 ```elixir
-decoded_body["joke"]
+decoded_body["category"]
 ```
 
 ## Building A Finch Request
@@ -421,9 +421,9 @@ curl https://api.openai.com/v1/images/generations \
 Putting all of this together, we get the following Finch request, which we can decode using Jason.
 
 ```elixir
-request = Finch.build(method, url, headers, body) |> Finch.request!(MyApp.Finch)
+response = Finch.build(method, url, headers, body) |> Finch.request!(MyApp.Finch)
 
-Jason.decode!(request.body)
+Jason.decode!(response.body)
 ```
 
 ### Your Turn
@@ -472,7 +472,22 @@ IO.puts(message)
 </details>
 
 ```elixir
+response =
+  Finch.build(
+    :post,
+    "https://api.openai.com/v1/chat/completions",
+    [
+      {"Content-Type", "application/json"},
+      {"Authorization", "Bearer $OPENAI_API_TOKEN"}
+    ],
+    Jason.encode!(%{
+      model: "gpt-3.5-turbo",
+      messages: [%{role: "user", content: "Hello!"}]
+    })
+  )
+  |> Finch.request!(MyApp.Finch)
 
+Jason.decode!(response.body)
 ```
 
 ## Commit Your Progress
