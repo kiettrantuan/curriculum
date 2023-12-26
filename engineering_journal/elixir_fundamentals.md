@@ -2342,3 +2342,7 @@ Or, to view them in the HTML as a string, use `Kernel.inspect/2`.
 ```exs
 <%= inspect(@value) %>
 ```
+
+## TCP
+
+`:gen_tcp` library to start a server that uses TCP to listen for connections on a network, it creates a socket connection on a specified port.
