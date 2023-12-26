@@ -354,7 +354,7 @@ Alternatively, we can specify the fields we want to display.
 For example, here's how we could retrieve only the title and the content for each entry.
 
 ```sql
-SELECT TITLE,CONTENT from entries
+SELECT TITLE,CONTENT from entries;
 ```
 
 The query above should display the following.
@@ -372,7 +372,7 @@ The query above should display the following.
 We can filter our `SELECT` results using the `WHERE` query. For example,
 
 ```sql
-SELECT * FROM users u WHERE u.id = 1
+SELECT * FROM users u WHERE u.id = 1;
 ```
 
 The `u` before `WHERE` is conceptually similar to a variable bound to each user in the table.
@@ -412,18 +412,28 @@ result2 = Postgrex.query!(conn, "select * from users", [])
 
 Use the following SQL smart cell to create a new user in the users table. Re-evaluate the smart cell above to see the new user in the table.
 
-<!-- livebook:{"attrs":{"cache_query":true,"connection":{"type":"postgres","variable":"conn"},"query":"","result_variable":"result3","timeout":null},"chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":{"cache_query":true,"connection":{"type":"postgres","variable":"conn"},"query":"INSERT INTO users (id,name,email) values (2,'who2','who2@who2.who');","result_variable":"result3","timeout":null},"chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
 
 ```elixir
-result3 = Postgrex.query!(conn, "", [])
+result3 =
+  Postgrex.query!(
+    conn,
+    "INSERT INTO users (id,name,email) values (2,'who2','who2@who2.who');",
+    []
+  )
 ```
 
 Use the following SQL smart cell to create a new entry in the entries table, which has a foreign key to the same user you previously created.
 
-<!-- livebook:{"attrs":{"connection":{"type":"postgres","variable":"conn"},"query":"","result_variable":"result4","timeout":null},"chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":{"cache_query":true,"connection":{"type":"postgres","variable":"conn"},"query":"INSERT INTO entries (id,title,content,userid) values (2,'title2','content2',2);","result_variable":"result4","timeout":null},"chunks":null,"kind":"Elixir.KinoDB.SQLCell","livebook_object":"smart_cell"} -->
 
 ```elixir
-result4 = Postgrex.query!(conn, "", [])
+result4 =
+  Postgrex.query!(
+    conn,
+    "INSERT INTO entries (id,title,content,userid) values (2,'title2','content2',2);",
+    []
+  )
 ```
 
 ## Relationships
