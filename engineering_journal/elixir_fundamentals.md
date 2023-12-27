@@ -2343,6 +2343,51 @@ Or, to view them in the HTML as a string, use `Kernel.inspect/2`.
 <%= inspect(@value) %>
 ```
 
-## TCP
+### TCP
 
 `:gen_tcp` library to start a server that uses TCP to listen for connections on a network, it creates a socket connection on a specified port.
+
+### Generator
+
+Add to Posts resource to existed phoenix project.
+
+Generate the resource.
+
+```sh
+mix phx.gen.html Posts Post posts title:string subtitle:string content:text
+```
+
+Create a database name `blog_dev` then migrate.
+
+```sh
+mix ecto.migrate
+```
+
+Then add the resource to `router.ex`.
+
+```elixir
+scope "/", BlogWeb do
+  pipe_through :browser
+
+  get "/", PageController, :index
+  resources "/posts", PostController
+end
+```
+
+Alternatively we can define every route individually.
+
+```elixir
+scope "/", BlogWeb do
+  pipe_through :browser
+
+  get "/", PageController, :index
+  get "/posts", PostController, :index
+  get "/posts/new", PostController, :new
+  post "/posts", PostController, :create
+  get "/posts/:id", PostController, :show
+  get "/posts/:id/edit", PostController, :edit
+  put "/posts/:id", PostController, :update
+  patch "/posts/:id", PostController, :update
+  delete "/posts/:id", PostController, :delete
+end
+```
