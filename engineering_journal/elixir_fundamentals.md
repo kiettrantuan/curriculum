@@ -19,7 +19,7 @@ Strings in Elixir are represented internally as **binaries**.
 - Concatenation: `<>`
 - Multi lines:
 
-```exs
+```elixir
 string = """
 line 1
 line 2
@@ -30,7 +30,7 @@ line 2
 - Escaping: `\`
 - `bag_distance/2` is pretty cool (return a float define the percentage of matching characters between 2 strings ?)
 
-```exs
+```elixir
 String.bag_distance("cats", "dogs") === 0.25
 
 String.bag_distance("robed", "bored") === 1.0
@@ -40,7 +40,7 @@ String.bag_distance("robed", "bored-robe") === 0.5
 
 ### Comparison Operators
 
-```exs
+```elixir
 # return false as type difference: float vs integer
 1.0 === 1
 ```
@@ -59,7 +59,7 @@ Named constants. Their name is their value
 
 Defined using a colon `:` and a series of letters, digits, and certain valid symbols.
 
-```exs
+```elixir
 :success
 :error
 
@@ -79,7 +79,7 @@ Fixed size containers for multiple elements. Can contain any data type.
 
 Defined using curly brackets `{}`.
 
-```exs
+```elixir
 {}
 {0, "string", :atoms}
 {:success, "Well done!"}
@@ -90,13 +90,13 @@ Defined using curly brackets `{}`.
 
 Defined using square brackets `[]`.
 
-```exs
+```elixir
 [0, "string", :atoms]
 ```
 
 Actually Linked Lists where every element is a Cons Cells with Head and Tail: `[head | tail]`
 
-```exs
+```elixir
 [2, 3] 
 # is syntax sugar for
 [2 | [3 | []]]
@@ -104,7 +104,7 @@ Actually Linked Lists where every element is a Cons Cells with Head and Tail: `[
 
 Lists can be added or subtracted using `++` and `--`. This operation occurs from `right to left`. Should use brackets avoid unintuitive code.
 
-```exs
+```elixir
 [0] ++ [1]
 # => [0, 1]
 [0, 1, 2, 3, 2, 1, 0] ++ [0, 2, 3]
@@ -129,13 +129,13 @@ Keys DO NOT have to be unique
 
 Performant for small amounts of data, but not for large amounts of data compare to maps.
 
-```exs
+```elixir
 [artist1: "song 1", artist2: "song 2", artist3: "song 3", artist4: "song 4", artist5: "song 5"]
 ```
 
 Actually a list of tuples with each first elements is atom.
 
-```exs
+```elixir
 [key: "value"] === [{:key, "value"}]
 ```
 
@@ -143,7 +143,7 @@ Keyword list syntax must come at the end of a list, or it'll cause a SyntaxError
 
 Access values using their atom key with square bracket.
 
-```exs
+```elixir
 keyword_list = [key: "value"]
 keyword_list[:key] === "value"
 ```
@@ -154,7 +154,7 @@ Defined using `%{}`. A key-value pair in map separated by an arrow `=>`.
 
 Key must be unique (different from keyword list) and it can be any elixir term.
 
-```exs
+```elixir
 %{:key => "value"}
 
 %{"key" => "value"}
@@ -166,13 +166,13 @@ Key must be unique (different from keyword list) and it can be any elixir term.
 
 Atom keys only Map can be write like keyword list.
 
-```exs
+```elixir
 %{key1: "value", key2: "value"}
 ```
 
 Access values using their key with square bracket (or dot - only valid for atom keys).
 
-```exs
+```elixir
 # Will break if key does not exist in map
 %{key1: %{key2: %{key3: "value"}}}.key1.key2.key3 === "value"
 # Will NOT break even key does not exist in map
@@ -182,7 +182,7 @@ Access values using their key with square bracket (or dot - only valid for atom 
 
 Can update **Existing** keys values using syntax `%{initial_map | updated_values}`.
 
-```exs
+```elixir
 initial = %{count: 1}
 
 %{initial | count: 2}
@@ -196,7 +196,7 @@ Ignored variables are led by an underscore `_`
 
 ### Tuple
 
-```exs
+```elixir
 {1, 2, 3} = {1, 2, 3}
 my_tuple = {1, 2, 3}
 {one, _two, three} = {1, 2, 3}
@@ -204,7 +204,7 @@ my_tuple = {1, 2, 3}
 
 ### List
 
-```exs
+```elixir
 [first] = [1]
 [first] = [1, 2, 3]
 # raise error
@@ -216,7 +216,7 @@ my_tuple = {1, 2, 3}
 
 ### Keyword List
 
-```exs
+```elixir
 [hello: my_variable] = [hello: "world"]
 my_variable === "world"
 
@@ -229,7 +229,7 @@ v === "value"
 
 Unlike List, Map don't have to match on every key-value pair and can NOT be pattern match the key.
 
-```exs
+```elixir
 %{one: one} = %{one: 1, two: 2}
 one === 1
 %{hello => world} = %{"hello" => "world"}
@@ -238,7 +238,7 @@ one === 1
 
 ### Range
 
-```exs
+```elixir
 start..finish//step = 1..10//2
 
 start === 1
@@ -250,7 +250,7 @@ step === 2
 
 ### Functions
 
-```exs
+```elixir
 # Create
 # Multiline fn return last line
 
@@ -286,7 +286,7 @@ Elixir's functions display as `function_name/arity` thus a function named add_tw
 
 `|>` for chaining functions. Pipe operator allows you to take the output of one function and pass it in as an argument for the input of another function.
 
-```exs
+```elixir
 # Instead of
 four.(three.(two.(one.(1), 2)))
 # or
@@ -307,7 +307,7 @@ Common statements: `if` , `cond` , `case`
 
 #### If (2 paths)
 
-```exs
+```elixir
 weather == :hot
 
 if weather == :cold do
@@ -329,7 +329,7 @@ recommendation === "t-shirt"
 
 We can use `unless` which is `if` reverse.
 
-```exs
+```elixir
 eat = true
 
 unless eat do
@@ -341,7 +341,7 @@ end === "Not hungry"
 
 #### Case (Pattern matching)
 
-```exs
+```elixir
 weather = :sunny
 
 case weather do
@@ -355,7 +355,7 @@ end
 
 Case does pattern matching left and right of `->` until match; No cases match will raise Error.
 
-```exs
+```elixir
 case {:exactly, :equal} do
   {:not_exactly, :equal} -> "non-matching case"
   {:exactly, :equal} -> "matching case"
@@ -373,7 +373,7 @@ end === "matching case"
 
 Return right value of first accepted truthy on the left of `->`. Will raise Error if no condition met.
 
-```exs
+```elixir
 temperature = 6
 
 cond do
@@ -396,7 +396,7 @@ Can be refer as a "bag of functions".
 
 Define a Module using `defmodule`. Define a Function inside Module using `def` or `defp` for private function.
 
-```exs
+```elixir
 # define module
 
 defmodule ModuleName do
@@ -431,7 +431,7 @@ Callback function passed to Module's function must be:
 - Explicitly provided the `functions arity` using the capture operator `&`.
 - OR wrap in an anonymous function.
 
-```exs
+```elixir
 defmodule HigherOrder do
   def higher_order_function(callback) do
     callback.()
@@ -455,7 +455,7 @@ HigherOrder.higher_order_function(fn -> Callback.callback_function() end)
 
 Defined by separate module names with a period `.` OR nested `defmodule`.
 
-```exs
+```elixir
 defmodule Languages.English do
   def greeting do
     "Hello"
@@ -479,7 +479,7 @@ NestedLanguages.English.greeting() === Languages.English.greeting()
 
 Define a compile-time module attribute using `@`.
 
-```exs
+```elixir
 defmodule Hero do
   @name "Spider-Man"
   @nemesis "Green Goblin"
@@ -502,7 +502,7 @@ end
 
 Should Read `Module Scope` section in docs, it's pretty important. Below just some short definition.
 
-```exs
+```elixir
 top_scope = "top_scope"
 
 defmodule ModuleScope2 do
@@ -526,7 +526,7 @@ end
 
 #### Multiple Function Clauses
 
-```exs
+```elixir
 defmodule MultipleFunctionClauses do
   def my_function do
     "arity is 0"
@@ -548,7 +548,7 @@ MultipleFunctionClauses.my_function(2) === "arity is 2"
 
 Default input
 
-```exs
+```elixir
 defmodule MultipleDefaultArgs do
   def all_defaults(param1 \\ "default argument 1", param2 \\ "default argument 2") do
     binding()
@@ -569,7 +569,7 @@ We can document modules using `@doc` and `@moduledoc` module attributes with a m
 - `@moduledoc` should describe the module at a high level.
 - `@doc` should document a single function in the module.
 
-```exs
+```elixir
 defmodule DoctestExample do
   @moduledoc """
   DoctestExample
@@ -604,7 +604,7 @@ Instances of the struct will not be allowed to contain any data other than these
 
 Actually implemented using maps under the hood.
 
-```exs
+```elixir
 defmodule StructName do
   defstruct [:key1, :key2, :key3]
 end
@@ -632,7 +632,7 @@ Person.greet(person) === "Hello, Peter."
 
 Structs can have keys with and without default value but Default keys MUST come LAST in the list.
 
-```exs
+```elixir
 defmodule DefaultKeys do
   defstruct [:key1, key2: "default2"]
 end
@@ -642,7 +642,7 @@ end
 
 `@enforce_keys` for ensure certain keys are set.
 
-```exs
+```elixir
 defmodule EnforcedNamePerson do
   @enforce_keys [:name]
   defstruct @enforce_keys ++ [:age]
@@ -654,7 +654,7 @@ end
 
 Manipulate
 
-```exs
+```elixir
 defmodule MyStruct do
   defstruct [:key]
 end
@@ -672,7 +672,7 @@ updated === %MyStruct{key: "new value"}
 
 Can be ascending or descending.
 
-```exs
+```elixir
 0..10 # from 0 -> 10
 5..-5 # from 5 -> 0 -> -5
 
@@ -693,7 +693,7 @@ Enumeration is the act of looping through elements.
 
 Common used: `Enum.map/2`, `Enum.filter/2`, and `Enum.reduce/2`.
 
-```exs
+```elixir
 Enum.map([1, 2, 3, 4, 5], fn element -> element * 2 end) === Enum.map(1..5, fn element -> element * 2 end)
 
 # `Enum.reduce/2`: 1 Is The Initial Accumulator Value
@@ -716,7 +716,7 @@ Other useful:
 
 **`Enum.chunk..` may very useful**
 
-```exs
+```elixir
 [1,2,3,4,5]
 |> Enum.chunk_every(2, 1, :discard) === [[1,2], [2,3], [3,4], [4,5]]
 ```
@@ -725,7 +725,7 @@ Other useful:
 
 Use `&` and Arity to provide module functions (mean built-in functions too).
 
-```exs
+```elixir
 my_function = fn element -> IO.inspect(element) end
 
 Enum.map(1..10, my_function)
@@ -751,7 +751,7 @@ List of Common modules (NOT ALL available modules):
 - Modules for Data Type: `Integer`, `String`, `List`, `Map`, `Keyword`, ...
 - Modules For Behavior: `Enum`, ...
 
-```exs
+```elixir
 # Get tuple elem by index
 Kernel.elem({3, 6, 9}, 1) === elem({3, 6, 9}, 1)
 elem({3, 6, 9}, 1) === 9
@@ -767,7 +767,7 @@ max(100,200) === min(200,300)
 inspect(%{}) === "%{}"
 ```
 
-```exs
+```elixir
 # Parse list - un list
 Integer.digits(123) === [1,2,3]
 Integer.undigits([1,2,3]) === 123
@@ -785,7 +785,7 @@ Integer.parse("25abc\n") === {25, "abc\n"}
 - `List.update_at/3` update an element at a specified index within a list.
 - `List.zip/1` combine elements from multiple lists into a single list of tuples
 
-```exs
+```elixir
 letters = ["a", "b", "c"]
 numbers = [1, 2, 3]
 
@@ -804,7 +804,7 @@ List.zip([letters, numbers]) === [{"a", 1}, {"b", 2}, {"c", 3}]
 - `Keyword.keys/1` list the keys in a keyword list.
 - `Keyword.keyword?/1` check if some data is a keyword list.
 
-```exs
+```elixir
 defmodule ConfigurableServer do
   def start_link(opts) do
     name = Keyword.get(opts, :name)
@@ -830,7 +830,7 @@ Data types that does not implement the Enumerable protocol, such as: integers, f
 
 To Enumerate these types, simply convert they to enumerable type like Lists.
 
-```exs
+```elixir
 Integer.digits(123)
 Integer.undigits([1,2,3])
 
@@ -858,7 +858,7 @@ Way to create new lists, maps, or sets by iterating over an existing collection 
 
 Similar to `Enum.map/2`, `Enum.filter/2`, and `Enum.reduce/2` functions but with a more concise syntax => Enum syntax sugar that has 3 parts: **generators**, **filters**, and **collectables**.
 
-```exs
+```elixir
 generator = 1..3
 
 # Generator: enumerable data type 
@@ -900,7 +900,7 @@ We can use multiple comma-separated generators, filters in a single comprehensio
 
 The comprehension treats each additional generator like a **nested loop**. For each element in the first loop, it will enumerate through every element in the second loop.
 
-```exs
+```elixir
 # Multi generators
 for a <- 1..3, b <- 4..6 do
   {a, b}
@@ -928,7 +928,7 @@ end
 
 `Date` structs store `year`, `month`, `day` and some other related fields.
 
-```exs
+```elixir
 # new `year`, `month`, `day`
 {:ok, date} = Date.new(2000, 10, 1)
 
@@ -939,7 +939,7 @@ date.day === 1
 
 `Time` structs store `hour`, `minute`, `second`.
 
-```exs
+```elixir
 # new `hour`, `minute`, `second`
 {:ok, time} = Time.new(12, 30, 10)
 
@@ -950,7 +950,7 @@ time.second === 10
 
 `DateTime` is a hybrid of `Date` and `Time`. It actually structs which can be `Map.from_struct`.
 
-```exs
+```elixir
 # new `date`, `time`
 {:ok, datetime} = DateTime.new(date, time)
 
@@ -978,7 +978,7 @@ Map.from_struct(datetime) === %{
 
 Sigils syntax use a tilda `~` and a character for the type of data they represent, such as: `U` is UTC datetime.
 
-```exs
+```elixir
 date = ~D[2000-10-01]
 time = ~T[12:30:10]
 # The Z Offset Specifies The Timezone Offset. Z Is Zero For UTC.
@@ -992,7 +992,7 @@ DateTime.new(~D[2000-10-01], ~T[12:30:10]) === datetime
 
 [Formatting Syntax](https://hexdocs.pm/elixir/Calendar.html#strftime/3-accepted-formats)
 
-```exs
+```elixir
 # `strftime`: String from Time
 
 Calendar.strftime(~U[2000-10-01 12:30:10Z], "%y-%m-%d %I:%M:%S %p") === "00-10-01 12:30:10 PM"
@@ -1006,7 +1006,7 @@ To check if a value is a string, we use the `is_binary/1` function. That's becau
 
 Use `?` to find codepoint of a character.
 
-```exs
+```elixir
 ?A === 65
 ?a === 97
 
@@ -1023,7 +1023,7 @@ Use `?` to find codepoint of a character.
 **Generally** each character is store in 1 byte (= 8 bits).
 Elixir uses UTF-8 to encode it's strings, meaning that each code point is encoded as a series of 8-bit bytes (cause 1 byte store integer max = 255).
 
-```exs
+```elixir
 byte_size("h") === 1
 bit_size("h") === 8
 
@@ -1035,7 +1035,7 @@ byte_size("é") === 2
 
 Be careful when splitting a string for enumeration, we can use `graphemes("abc")` instead `split("abc", "", trim: true)`.
 
-```exs
+```elixir
 String.graphemes("👩‍🚒") === ["👩‍🚒"]
 String.codepoints("👩‍🚒") === ["👩", "‍", "🚒"]
 
@@ -1046,7 +1046,7 @@ String.graphemes(noel) === ["n", "o", "ë", "l"]
 
 **Charlist** is a **List** of valid code points.
 
-```exs
+```elixir
 [?h, ?e, ?l, ?l, ?o] === [104, 101, 108, 108, 111]
 
 ~c"hello"  === [?h, ?e, ?l, ?l, ?o]
@@ -1069,13 +1069,13 @@ Enum.map(~c"abcde", fn each -> each + 1 end) === ~c"bcdef"
 
 Use `~r` sigil with `//` to create a Regex.
 
-```exs
+```elixir
 ~r/hello/
 ```
 
 ### Module Regex
 
-```exs
+```elixir
 Regex.match?(~r/ll/, "hello hello") === true
 String.match?("hello hello", ~r/ll/) === true
 
@@ -1115,7 +1115,7 @@ String.split("one1two2three", ~r/\d/) === ["one", "two", "three"]
 - `(?<=)` positive lookbehind. Match expressions **Preceded** by another.
 - `(?<!)` negative lookbehind. Match expressions **NOT Preceded** by another.
 
-```exs
+```elixir
 Regex.run(~r/(a)(b)/, "ab") === ["ab", "a", "b"] # match "ab" ? -> match "a" ? -> match "b" ?
 
 Regex.run(~r/(ab)/, "ab") === ["ab", "ab"] # match "ab" ? -> match "ab" ?
@@ -1143,7 +1143,7 @@ Regex.scan(~r/(?<=\d\. )\w+(?=\.)/, "
 - `m`: patterns such as start of line `^` and end of line `$` will match multiple lines instead of just the string.
 - `x`: Regular expressions can be written on multiple lines and documented.
 
-```exs
+```elixir
 Regex.match?(
   ~r/
 \+\d{1,3} # country code i.e. +1
@@ -1162,7 +1162,7 @@ Regex.match?(
 
 Elixir can **optimize recursive functions if its tail-call** (the last thing it does is call itself). Otherwise, if the function calls itself in the body, it's called **body-recursion which is not optimized**.
 
-```exs
+```elixir
 defmodule RecursiveSum do
   def sum(list, accumulator \\ 0) do
     case list do
@@ -1184,7 +1184,7 @@ BaseCaseExample.sum([1, 2, 3], 0) === 6
 
 Code block below will be optimize: **Recommended Format**.
 
-```exs
+```elixir
 defmodule CountBetween do
   def count(finish, finish), do: IO.puts(finish)
 
@@ -1207,7 +1207,7 @@ CountBetween.count(10, 5)
 
 Behave based on data shape
 
-```exs
+```elixir
 case {1, 2} do
   [a, b] -> "behavior for list" 
   {a, b} -> "behavior for tuple"
@@ -1292,7 +1292,7 @@ MessageMatchExample.send(%{is_admin: true}, "") === {:error, :empty_message}
 
 The **pin operator** allows us to use variables as hard-coded values, rather than rebinding a variable.
 
-```exs
+```elixir
 received = [1, 2]
 expected = [1, 2, 3]
 
@@ -1308,7 +1308,7 @@ actual = [1, 2, 3]
 [^first, 2, 3] = actual # Nothing happened
 ```
 
-```exs
+```elixir
 pinned_value = 1
 
 case {:ok, 1} do
@@ -1325,7 +1325,7 @@ end === "clause 1" # WRONG
 
 ## Guards
 
-```exs
+```elixir
 defmodule RockPaperScissors do
   defguard is_guess(guess) when guess in [:rock, :paper, :scissors]
 
@@ -1343,7 +1343,7 @@ RockPaperScissors.winner(:rock) === :paper
 RockPaperScissors.winner("invalid guess") # Error
 ```
 
-```exs
+```elixir
 defmodule PolymorphicGuardExample do
   def double(num) when is_number(num) do
     num * 2
@@ -1362,7 +1362,7 @@ PolymorphicGuardExample.double("example") === "example example"
 
 `with` is a control structure that provides a convenient way to handle multiple expressions and pattern match on their results. It allows you to chain together a sequence of expressions and evaluate them one by one, stopping if any of them return an error or a pattern match fails.
 
-```exs
+```elixir
 with {:ok, v1} <- check1(),
      {:ok, v2} <- check2(v1),
      {:ok, v3} <- check3(v2),
@@ -1393,7 +1393,7 @@ end
 
 With Else
 
-```exs
+```elixir
 user = %{name: "Jon", is_admin: false}
 
 with %{name: name, is_admin: true} <- user do
@@ -1430,7 +1430,7 @@ Specifically, protocols enable polymorphic behavior based off of data.
 
 Define using `defprotocol` for head and `defimpl` for implementation and `for:` for struct or data type.
 
-```exs
+```elixir
 defprotocol Adder do
   def add(value, value)
 end
@@ -1454,7 +1454,7 @@ Adder.add("hello, ", "world")
 
 For modules that have struct
 
-```exs
+```elixir
 defprotocol Sound do
   def say(struct)
 end
@@ -1483,7 +1483,7 @@ Sound.say(%Cat{mood: :happy})
 
 In short, **chain Enums** waste memory. Instead, use Streams and Lazy evaluation can massively improve memory usage.
 
-```exs
+```elixir
 1..10
 |> Enum.map(fn each -> each * 2 end)
 |> Enum.filter(fn each -> each <= 10 end)
@@ -1494,7 +1494,7 @@ In short, **chain Enums** waste memory. Instead, use Streams and Lazy evaluation
 
 The `Stream` will only evaluate when it's called with any eager function from the `Enum` module.
 
-```exs
+```elixir
 1..10
 |> Stream.map(fn each -> each * 2 end)
 |> Stream.filter(fn each -> each <= 10 end)
@@ -1509,7 +1509,7 @@ Stream can be used as generator.
 - `iterate/2` to iterate over an accumulator. Each function return `next_accumulator`.
 - `unfold/2` separates the accumulator and the return value. So you can accumulate, and then generate a separate value from the accumulator. Each function return: `{value, next_accumulator}` to continue OR `nil` to end stream.
 
-```exs
+```elixir
 # [1,2,3,1,2,3,...] **Cycle** to infinity
 Stream.cycle([1, 2, 3])
 |> Enum.take(10) === [1, 2, 3, 1, 2, 3, 1, 2, 3, 1]
@@ -1567,7 +1567,7 @@ While the file is open, `IO.read/2` and `IO.write/2` to read and write to the fi
 - `IO.read/2` function can read a new line each time called.
 - `IO.write/2` writes over the entire content of the file. We need to open the file with the :write option to enable write permission.
 
-```exs
+```elixir
 File.write!("open_close.txt", content)
 
 {:ok, file} = File.open("open_close.txt")
@@ -1580,7 +1580,7 @@ IO.read(file, :line) |> IO.inspect()
 File.close(file)
 ```
 
-```exs
+```elixir
 File.write!("open_close.txt", content)
 
 {:ok, file} = File.open("open_close.txt", [:write])
@@ -1608,7 +1608,7 @@ All Elixir code runs inside of a process.
 - `Process.send_after/3` send message after milliseconds.
 - `Process.exit/2` with option `:normal` or `:kill`.
 
-```exs
+```elixir
 send(self(), {:hello, "world"})
 
 receive do
@@ -1618,7 +1618,7 @@ end === "world"
 
 Spawn's process end when its callback function end.
 
-```exs
+```elixir
 pid = spawn(fn -> IO.puts("I was called") end)
 
 Process.alive?(pid) && IO.puts("I am alive!")
@@ -1638,7 +1638,7 @@ Process.alive?(pid) === false && IO.puts("I am dead :(")
 
 This process will die after receive a message.
 
-```exs
+```elixir
 pid1 = spawn(fn ->
   receive do
     {:hello, what} -> IO.puts(what)
@@ -1650,7 +1650,7 @@ send(pid1, {:hello, "world"})
 
 This process stay alive as it loop itself.
 
-```exs
+```elixir
 defmodule ServerProcess do
   def loop do
     IO.puts("called #{Enum.random(1..10)}")
@@ -1668,7 +1668,7 @@ send(server_process, "message")
 
 Then, we can store state as below.
 
-```exs
+```elixir
 defmodule Counter do
   def loop(state \\ 0) do
     IO.inspect(state, label: "counter")
@@ -1733,7 +1733,7 @@ We can send the [GenServer](https://hexdocs.pm/elixir/GenServer.html) messages w
 - [Process.send/3](https://hexdocs.pm/elixir/Process.html#send/3) send a generic asynchronous message with some additional options handled by `handle_info/2`.
 - [Process.send_after/4](https://hexdocs.pm/elixir/Process.html#send_after/4) send a generic asynchronous message handled by `handle_info/2`.
 
-```exs
+```elixir
 defmodule CounterServer do
   use GenServer
 
@@ -1780,7 +1780,7 @@ Callback functions are often referred to as the **Server API**.
 
 Client API functions typically use `__MODULE__` when referencing the current module to make it easier to rename the module in the future.
 
-```exs
+```elixir
 defmodule ClientServerExample do
   use GenServer
   # Client API
@@ -1816,7 +1816,7 @@ end
 
 Separated Client and Server modules can not use `__MODULE__` to reference.
 
-```exs
+```elixir
 defmodule ClientExample do
   def start_link(_opts) do
     GenServer.start_link(ServerExample, [])
@@ -1855,7 +1855,7 @@ end
 
 Named processes are unique, there cannot be two processes with the same name. Named processes are also easy to reference as you can use the name of the process to send them a message.
 
-```exs
+```elixir
 defmodule NamedCounter do
   def start_link(_opts) do
     GenServer.start_link(NamedCounter, [], name: NamedCounter)
@@ -1882,7 +1882,7 @@ Process.whereis(NamedCounter)
 
 A GenServer cannot synchronously send itself a message using `call/3` because the current message blocks the process mailbox.
 
-```exs
+```elixir
 defmodule SendingSelfExample do
   use GenServer
 
@@ -1911,7 +1911,7 @@ GenServer.call(pid, :talking_to_myself)
 
 Instead of `cast/2` + `handle_cast/2` or `call/3` + `handle_call/3`, use `send_after/3` with `handle_info/2` to send self a message.
 
-```exs
+```elixir
 defmodule Timer do
   @moduledoc """
   iex> {:ok, pid} = Timer.start_link([])
@@ -1954,7 +1954,7 @@ end
 
 To test something **Stateful** like a process.
 
-```exs
+```elixir
 defmodule CounterServer do
   use GenServer
 
@@ -1991,7 +1991,7 @@ end
 
 Generally, we **don't want to test** the implementation like below. Cause if any of the internals change, these tests could break, even though the behavior of the counter module doesn't.
 
-```exs
+```elixir
 ExUnit.start(auto_run: false)
 
 defmodule CounterServerTest do
@@ -2009,7 +2009,7 @@ ExUnit.run()
 
 Instead, we generally **want to test** on the client interface of the GenServer like below.
 
-```exs
+```elixir
 ExUnit.start(auto_run: false)
 
 defmodule CounterClientTest do
@@ -2031,7 +2031,7 @@ ExUnit.run()
 
 Every supervisor is also a process. The `Supervisor.start_link/2` function accepts a list of child processes and starts the supervisor process. We provide each child as a map with an `:id` and a `:start` signature.
 
-```exs
+```elixir
 defmodule Worker do
   use GenServer
 
@@ -2075,7 +2075,7 @@ Instead of a map with `:id` and `:start` keys, use tuple:
 - First value is the name of the module as `:id`.
 - Second value is the argument passed to `start_link/1`.
 
-```exs
+```elixir
 children = [
   {Bomb, [name: "Syntax Sugar Bomb", bomb_time: 1000]}
 ]
@@ -2093,7 +2093,7 @@ OR we can manually add these configuration, file for supervised.
 
 - `my_app/application.ex` use an `Application` module that defines application callbacks.
 
-```exs
+```elixir
 defmodule MyApp.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
@@ -2118,7 +2118,7 @@ end
 
 - Add module to `mix.exs`.
 
-```exs
+```elixir
 def application do
   [
     extra_applications: [:logger],
@@ -2138,7 +2138,7 @@ Task is also OTP-compliant, meaning it conform to certain OTP conventions that i
 - `await_many/1` await a list of async task.
 - `await/2` and `await_many/2` accept a timeout value as the second argument (default to 5000 milliseconds).
 
-```exs
+```elixir
 task =
   Task.async(fn ->
     # simulating expensive calculation
@@ -2149,7 +2149,7 @@ task =
 Task.await(task)
 ```
 
-```exs
+```elixir
 computation1 = fn -> Process.sleep(1000) end
 computation2 = fn -> Process.sleep(1000) end
 
@@ -2172,7 +2172,7 @@ microseconds / 1000 / 1000
 - `Task.Supervisor.async/2` + `Task.await/2` execute tasks concurrently and retrieve its result. If the task fails, the caller will also fail.
 - `Task.Supervisor.async_nolink/2` + `Task.yield/2` + `Task.shutdown/2` execute tasks concurrently and retrieve their results or the reason they failed within a given time frame. If the task fails, the caller won't fail. You will receive the error reason either on yield or shutdown.
 
-```exs
+```elixir
 children = [
   {Task.Supervisor, name: MyTaskSupervisor}
 ]
@@ -2212,7 +2212,7 @@ Popular HTTP client module.
 
 - Build finch request: `Finch.build(method, url, headers \\ [], body \\ nil, opts \\ [])`.
 
-```exs
+```elixir
 # start a finch process
 Finch.start_link(name: MyApp.Finch)
 
@@ -2225,7 +2225,7 @@ Finch.request!(request, MyApp.Finch)
 
 Module named `JASON` to encode/decode string/map to map/string.
 
-```exs
+```elixir
 Jason.decode!("{\"key1\":\"value1\",\"key2\":\"value2\"}") === %{"key1" => "value1", "key2" => "value2"}
 
 Jason.encode!(%{"key1" => "value1", "key2" => "value2"}) === "{\"key1\":\"value1\",\"key2\":\"value2\"}"
@@ -2246,7 +2246,7 @@ curl https://api.openai.com/v1/images/generations \
 
 To finch request:
 
-```exs
+```elixir
 method = :post
 
 url = "https://api.openai.com/v1/images/generations"
@@ -2281,7 +2281,7 @@ Phoenix sets up a pipeline of plugs and uses the transformed conn `Plug.Conn` st
 
 Verified Routes using the ~p sigil. These routes replace Path Helpers.
 
-```exs
+```elixir
 ~p"/home"
 ```
 
@@ -2319,7 +2319,7 @@ Verified Routes using the ~p sigil. These routes replace Path Helpers.
 
 Using `<%` (or `<%=`) `%>` and Elixir code between. `<%=` is for expressions that output a value.
 
-```exs
+```elixir
 <%= if DateTime.utc_now().hour > 12 do %>
   <p>Good afternoon!</p>
 <% else %>
@@ -2333,13 +2333,13 @@ Using `<%` (or `<%=`) `%>` and Elixir code between. `<%=` is for expressions tha
 
 `IO.inspect/2` values in the page without injecting them into the HTML.
 
-```exs
+```elixir
 <% IO.inspect(@value) %>
 ```
 
 Or, to view them in the HTML as a string, use `Kernel.inspect/2`.
 
-```exs
+```elixir
 <%= inspect(@value) %>
 ```
 
@@ -2347,47 +2347,291 @@ Or, to view them in the HTML as a string, use `Kernel.inspect/2`.
 
 `:gen_tcp` library to start a server that uses TCP to listen for connections on a network, it creates a socket connection on a specified port.
 
-### Generator
+## Phoenix Advanced
 
-Add to Posts resource to existed phoenix project.
+### Use Ecto to work with Database
 
-Generate the resource.
+Ecto provides API layer for communicating with database.
 
-```sh
-mix phx.gen.html Posts Post posts title:string subtitle:string content:text
+4 main Ecto Modules:
+
+- [Ecto.Repo](https://hexdocs.pm/ecto/Ecto.Repo.html) handles communication between app and database. `Ecto.Repo` **reads** and **writes** from the underlying PostgreSQL database.
+- [Ecto.Query](https://hexdocs.pm/ecto/Ecto.Query.html) built queries to retrieve and manipulate data with the `Ecto.Repo` repository.
+- [Ecto.Schema](https://hexdocs.pm/ecto/Ecto.Schema.html) maps the application struct data representation to the underlying PostgreSQL database representation.
+- [Ecto.Changeset](https://hexdocs.pm/ecto/Ecto.Changeset.html) creates changesets for validating and applying constraints to structs.
+
+4 main Domain Modules:
+
+- **Contexts**: They encapsulate specific domain areas, define the business logic and data access functions, and provide an API to expose functionality to other parts of the application.
+
+- **Schemas**: They define the structure of the data entities in the domain, including fields, types, and constraints.
+
+- **Repo**: It provides an abstraction layer for interacting with the database, encapsulating queries, and providing a clean interface to perform CRUD operations on the entities defined in **Schema** modules.
+
+- **Migrations**: They define changes to the database schema over time, such as creating or updating tables and columns.
+
+```elixir
+defmodule Blog.Posts do
+  import Ecto.Query, warn: false
+  alias Blog.Repo
+
+  alias Blog.Posts.Post
+
+  def list_posts do
+    Repo.all(Post)
+  end
+
+  def get_post!(id), do: Repo.get!(Post, id)
+
+  def create_post(attrs \\ %{}) do
+    %Post{}
+    |> Post.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_post(%Post{} = post, attrs) do
+    post
+    |> Post.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_post(%Post{} = post) do
+    Repo.delete(post)
+  end
+
+  def change_post(%Post{} = post, attrs \\ %{}) do
+    Post.changeset(post, attrs)
+  end
+end
 ```
 
-Create a database name `blog_dev` then migrate.
+#### Generators
+
+[mix phx.gen](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.html) command can define all of the necessary modules and boilerplate for part of our domain.
+
+For example, we could generate posts in a blog project with the following command.
 
 ```sh
+mix phx.gen.html Posts Post posts title:string body:text
+```
+
+The command above would to the following:
+
+- Create a **Posts** context.
+- Create a **Post** schema
+- Creates a **posts** table in the database with the `title:string` and `body:text` fields. See the [Attributes](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-attributes) documentation for a complete list of attribute types.
+
+It also generates boilerplate for the web layer of our application including the controller, component, and template. It does not generate routes for our router though, as these have to be manually inserted.
+
+See [mix phx.gen](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.html) for a complete list of phoenix generators.
+
+#### Contexts
+
+Contexts are a way of organizing related functionality. For example, **Blog** app has **Posts** Context that manages all operations for creating, editing, and deleting blog posts.
+
+Contexts often work with `Ecto.Query` when writing queries for retrieving and manipulating data in a database.
+
+Example query that allows us to filter a list of posts query by a case insensitive and partially matching title field:
+
+```elixir
+def list_posts(title) do
+  # % wildcard to find partially matching searches.
+  search = "%#{title}%"
+  # ilike insensitive search
+  query = from p in Post, where: ilike(p.title, ^search)
+
+  Repo.all(query)
+end
+
+def list_posts(title) do
+  search = "%#{title}%"
+  Post
+  |> where([p], ilike(p.title, ^search))
+  |> Repo.all()
+end
+```
+
+#### Schema
+
+Schema maps the fields of the table to the fields of the struct in the module, and it also defines any constraints or validations on those fields.
+
+Validations ensure data is valid before entering the database. Constraints are rules enforced by the database.
+
+```elixir
+defmodule Blog.Posts.Post do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "posts" do
+    field :content, :string
+    field :subtitle, :string
+    field :title, :string
+
+    timestamps()
+  end
+
+  @doc false
+  def changeset(post, attrs) do
+    post
+    |> cast(attrs, [:title, :subtitle, :content])
+    |> validate_required([:title, :subtitle, :content])
+    |> unique_constraint(:title)
+  end
+end
+```
+
+#### Migration
+
+`Ecto.Migration` module provides functions for manipulating tables and fields in a table.
+
+You can use any of the Elixir Primitive Types and they will be converted to the appropriate Field Type for your database.
+
+Some database field types which are not Elixir primitive types such as :text can be given directly.
+
+```elixir
+defmodule Blog.Repo.Migrations.CreatePosts do
+  use Ecto.Migration
+
+  def change do
+    create table(:posts) do
+      add :title, :string
+      add :subtitle, :string
+      add :content, :text
+
+      timestamps()
+    end
+    create unique_index(:posts, [:title])
+  end
+end
+```
+
+Migrations should always be generated rather than manually created to add a timestamp to the migration file.
+
+```sh
+# Create a migration named create_posts
+mix ecto.gen.migration create_posts
+
+# Run Migrations
 mix ecto.migrate
+
+# Reset The Database And Re-run Migrations
+mix ecto.reset
+
+# Rollback migrations
+mix ecto.rollback
 ```
 
-Then add the resource to `router.ex`.
+Table:
+
+- [create/2](https://hexdocs.pm/ecto_sql/Ecto.Migration.html#create/2): creates a new table in the database
+- [alter/2](https://hexdocs.pm/ecto_sql/Ecto.Migration.html#alter/2): modifies an existing table in the database
+- [rename/2](https://hexdocs.pm/ecto_sql/Ecto.Migration.html#rename/2): renames an existing table in the database
+- [drop/2](https://hexdocs.pm/ecto_sql/Ecto.Migration.html#drop/2): removes an existing table from the database
+
+Table's Fields:
+
+- [add/3](https://hexdocs.pm/ecto_sql/Ecto.Migration.html#add/3) adds a new field to the table.
+- [modify/2](https://hexdocs.pm/ecto_sql/Ecto.Migration.html#modify/3) modifies an existing field in the table.
+- [remove/2](https://hexdocs.pm/ecto/Ecto.Migration.html#remove/1) removes an existing field from the table.
 
 ```elixir
-scope "/", BlogWeb do
-  pipe_through :browser
+defmodule MyApp.Repo.Migrations.AlterUsersTable do
+  use Ecto.Migration
 
-  get "/", PageController, :index
-  resources "/posts", PostController
+  def change do
+    alter table(:users) do
+      add :phone, :string
+
+      modify :email, :string, unique: true
+      modify :name, :string, null: false
+
+      remove :age
+    end
+  end
 end
 ```
 
-Alternatively we can define every route individually.
+#### Query
+
+Common functions:
+
+- [from/2](https://hexdocs.pm/ecto/Ecto.Query.html#from/2): Defines the table or tables to query
+- [where/3](https://hexdocs.pm/ecto/Ecto.Query.html#where/3): Specifies a condition that records must meet to be included in the query results.
+- [order_by/3](https://hexdocs.pm/ecto/Ecto.Query.html#order_by/3): Sorts the query results by one or more fields.
+- [select/3](https://hexdocs.pm/ecto/Ecto.Query.html#select/3): Specifies which fields to include in the query results.
+- [type](https://hexdocs.pm/ecto/Ecto.Query.API.html#type/2): Returns a new query object with a specific type. Often useful when providing Elixir terms in queries to convert them into a database type.
+
+Here's an example query using keyword list syntax. The `^` symbol is used to inject Elixir terms into a database query. Elixir terms must be bound to a variable to inject them.
 
 ```elixir
-scope "/", BlogWeb do
-  pipe_through :browser
+search = "%#{title}%"
 
-  get "/", PageController, :index
-  get "/posts", PostController, :index
-  get "/posts/new", PostController, :new
-  post "/posts", PostController, :create
-  get "/posts/:id", PostController, :show
-  get "/posts/:id/edit", PostController, :edit
-  put "/posts/:id", PostController, :update
-  patch "/posts/:id", PostController, :update
-  delete "/posts/:id", PostController, :delete
-end
+today = DateTime.utc_now()
+
+query =
+  from(p in Post,
+    where: ilike(p.title, ^search),
+    where: p.visible,
+    where: p.published_on <= type(^today, :utc_datetime),
+    order_by: [desc: p.published_on]
+  )
+  
+query_piped =
+  Post
+  |> where([p], ilike(p.title, ^search))
+  |> where([p], p.visible)
+  |> where([p], p.published_on <= type(^today, :utc_datetime))
+  |> order_by([p], desc: p.published_on)
+
+query === query_piped
+```
+
+#### Repo
+
+Common functions:
+
+- [Repo.all](https://hexdocs.pm/ecto/Ecto.Repo.html#c:all/2): get all records.
+- [Repo.get!](https://hexdocs.pm/ecto/Ecto.Repo.html#c:get!/3): get one record.
+- [Repo.insert/2](https://hexdocs.pm/ecto/Ecto.Repo.html#c:insert/2): insert a record.
+- [Repo.update](https://hexdocs.pm/ecto/Ecto.Repo.html#c:update/2): update existing record.
+- [Repo.delete](https://hexdocs.pm/ecto/Ecto.Repo.html#c:delete/2): delete record.
+
+```elixir
+%Post{}
+|> Post.changeset(%{title: "some title", subtitle: "some subtitle" content: "some content"})
+|> Repo.insert()
+```
+
+#### Seeding
+
+Phoenix projects include a `priv/repo/seeds.exs` file for creating data (seeding) the database.
+
+The `seed.exs` file can be run with the following command from the project folder:
+
+```
+mix run priv/repo/seeds.exs
+```
+
+Typically seed files work with the `Repo` module or functions in contexts to create data for manual testing purposes.
+
+```elixir
+Blog.Repo.insert!(%Blog.Posts.Post{
+  title: "Some Title",
+  subtitle: "Some Subtitle",
+  content: "Some Content",
+})
+
+Blog.Posts.create_post(%{
+  title: "Some Title",
+  subtitle: "Some Subtitle",
+  content: "Some Content",
+})
+```
+
+Seed files should not be run in the test environment, as they can interfere with test assertions.
+
+Seeds files are automatically run when resetting the database.
+
+```
+mix ecto.reset
 ```

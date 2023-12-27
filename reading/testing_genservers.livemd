@@ -216,9 +216,9 @@ defmodule CountDown do
 
   # Client
 
-  def start_link(inital \\ 0, opts \\ []) do
+  def start_link(initial \\ 0, opts \\ []) do
     # Implementation
-    GenServer.start_link(__MODULE__, inital, opts)
+    GenServer.start_link(__MODULE__, initial, opts)
   end
 
   def decrement(pid) do
