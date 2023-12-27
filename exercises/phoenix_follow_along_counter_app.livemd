@@ -175,7 +175,7 @@ defmodule CounterWeb.CounterController do
   use CounterWeb, :controller
 
   def count(conn, params) do
-    render(conn, :count, count: params["count"] || 0)
+    render(conn, :count, count: String.to_integer(params["count"]) || 0)
   end
 end
 ```
