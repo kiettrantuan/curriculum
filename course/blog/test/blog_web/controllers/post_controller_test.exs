@@ -4,7 +4,11 @@ defmodule BlogWeb.PostControllerTest do
   import Blog.PostsFixtures
 
   @create_attrs %{title: "some title", subtitle: "some subtitle", content: "some content"}
-  @update_attrs %{title: "some updated title", subtitle: "some updated subtitle", content: "some updated content"}
+  @update_attrs %{
+    title: "some updated title",
+    subtitle: "some updated subtitle",
+    content: "some updated content"
+  }
   @invalid_attrs %{title: nil, subtitle: nil, content: nil}
 
   describe "index" do
@@ -12,6 +16,24 @@ defmodule BlogWeb.PostControllerTest do
       conn = get(conn, ~p"/posts")
       assert html_response(conn, 200) =~ "Listing Posts"
     end
+  end
+
+  test "search for posts - non-matching", %{conn: conn} do
+    post = post_fixture(title: "some title")
+    conn = get(conn, ~p"/posts", title: "Non-Matching")
+    refute html_response(conn, 200) =~ post.title
+  end
+
+  test "search for posts - exact match", %{conn: conn} do
+    post = post_fixture(title: "some title")
+    conn = get(conn, ~p"/posts", title: "some title")
+    assert html_response(conn, 200) =~ post.title
+  end
+
+  test "search for posts - partial match", %{conn: conn} do
+    post = post_fixture(title: "some title")
+    conn = get(conn, ~p"/posts", title: "itl")
+    assert html_response(conn, 200) =~ post.title
   end
 
   describe "new post" do

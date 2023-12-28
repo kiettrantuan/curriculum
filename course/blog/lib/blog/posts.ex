@@ -17,8 +17,13 @@ defmodule Blog.Posts do
       [%Post{}, ...]
 
   """
-  def list_posts do
-    Repo.all(Post)
+  def list_posts(title \\ "") do
+    # % wildcard to find partially matching searches.
+    search = "%#{title}%"
+    # ilike insensitive search
+    query = from p in Post, where: ilike(p.title, ^search)
+
+    Repo.all(query)
   end
 
   @doc """
