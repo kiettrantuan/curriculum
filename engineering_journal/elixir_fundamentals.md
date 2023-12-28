@@ -713,12 +713,20 @@ Other useful:
 - `Enum.count/2` return the number of elements in a collection collection.
 - `Enum.find/3` return an element in a collection that matches some condition. Middle variable of /3 is return value instead of nil if no match found.
 - `Enum.random/1` return a random element in a collection.
+- `Enum.into/2` merge default field values with overridden attributes.
 
-**`Enum.chunk..` may very useful**
+**`Enum.chunk..` and `Enum.into/2` may very useful**
 
 ```elixir
 [1,2,3,4,5]
 |> Enum.chunk_every(2, 1, :discard) === [[1,2], [2,3], [3,4], [4,5]]
+
+[title: "overridden title"]
+|> Enum.into(%{
+  content: "some content",
+  subtitle: "some subtitle",
+  title: "some title"
+}) === %{title: "overridden title", content: "some content", subtitle: "some subtitle"}
 ```
 
 #### Capture Operator And Module Functions
@@ -2349,7 +2357,7 @@ Or, to view them in the HTML as a string, use `Kernel.inspect/2`.
 
 ## Phoenix Advanced
 
-### Use Ecto to work with Database
+### Ecto and Database
 
 Ecto provides API layer for communicating with database.
 
@@ -2608,7 +2616,7 @@ Phoenix projects include a `priv/repo/seeds.exs` file for creating data (seeding
 
 The `seed.exs` file can be run with the following command from the project folder:
 
-```
+```sh
 mix run priv/repo/seeds.exs
 ```
 
@@ -2632,6 +2640,83 @@ Seed files should not be run in the test environment, as they can interfere with
 
 Seeds files are automatically run when resetting the database.
 
-```
+```sh
 mix ecto.reset
+```
+
+### Test
+
+2 primary test folders:
+
+- `tests/app` contains modules tests, such as `Blog.PostControllerTest` in `tests/app_web/post_controller_test.exs`.
+- `tests/app_web` for contexts tests, such as `Blog.PostsTest` in `tests/app/posts_test.exs`.
+
+1 support test folder `tests/support` contains:
+
+- `DataCase` in `data_case.ex` sets up test database (sandbox) and provides helper functions for creating and manipulating data. Typically used for contexts tests.
+- `ConnCase` in `conn_case.ex`sets up an HTTP connection and provides helper functions for making HTTP requests and inspecting responses. Typically used for controllers tests.
+- Child folder `fixtures` used to create test data.
+
+#### Test what ?
+
+Some areas that should be considered when deciding what to test:
+
+- **Core Functionality**: Ensure the main functionality for the application works as expected. For example the generated tests above cover the main CRUD actions for the system, and important features such as error handling.
+- **Previously Caught Bugs**: If possible, when fixing bugs in an application, write a test that reproduces the bug. This prevents bugs from re-emerging in a system like a game of whack-a-mole where you fix a bug and cause another by doing so.
+- **The Context**: Contexts are the interface to a resource. They allow you to focus on testing the functions in isolation, without worrying about the HTTP request/response cycle and avoid the overhead of setting up a full HTTP request/response cycle. They are generally more performant and therefore great for covering a wide variety of test cases.
+- **The Controller**: Controllers are the interface to an entire web application. They require more setup and overhead, but are therefore more comprehensive when testing a system. They are fantastic for ensuring an entire feature works as expected from the client's perspective rather than a single internal piece of an application.
+
+#### UI Tests
+
+Testing UI interactions such as submitting a form or clicking a button is best done using E2E (End-To-End) libraries such as [Wallaby](https://github.com/elixir-wallaby/wallaby).
+
+#### Example Search tests
+
+Context:
+
+```elixir
+test "list_posts/1 filters posts by partial and case-insensitive title" do
+  post = post_fixture(title: "Title")
+
+  # non-matching
+  assert Posts.list_posts("Non-Matching") == []
+  # exact match
+  assert Posts.list_posts("Title") == [post]
+  # partial match end
+  assert Posts.list_posts("tle") == [post]
+  # partial match front
+  assert Posts.list_posts("Titl") == [post]
+  # partial match middle
+  assert Posts.list_posts("itl") == [post]
+  # case insensitive lower
+  assert Posts.list_posts("title") == [post]
+  # case insensitive upper
+  assert Posts.list_posts("TITLE") == [post]
+  # case insensitive and partial match
+  assert Posts.list_posts("ITL") == [post]
+  # empty
+  assert Posts.list_posts("") == [post]
+end
+```
+
+Controller:
+
+```elixir
+test "search for posts - non-matching", %{conn: conn} do
+  post = post_fixture(title: "some title")
+  conn = get(conn, ~p"/posts", title: "Non-Matching")
+  refute html_response(conn, 200) =~ post.title
+end
+
+test "search for posts - exact match", %{conn: conn} do
+  post = post_fixture(title: "some title")
+  conn = get(conn, ~p"/posts", title: "some title")
+  assert html_response(conn, 200) =~ post.title
+end
+
+test "search for posts - partial match", %{conn: conn} do
+  post = post_fixture(title: "some title")
+  conn = get(conn, ~p"/posts", title: "itl")
+  assert html_response(conn, 200) =~ post.title
+end
 ```
